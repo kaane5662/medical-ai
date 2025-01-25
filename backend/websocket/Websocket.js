@@ -11,6 +11,21 @@ const io = new Server(server, {
   },
 });
 
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+      return next(new Error("Authentication error: No token provided"));
+    }
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.user = decoded; // Attach user data to the socket
+      next();
+    } catch (err) {
+      return next(new Error("Authentication error: Invalid token"));
+    }
+  });
+
 // WebSocket connection handling
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
@@ -35,6 +50,11 @@ io.on("connection", (socket) => {
         patientId,
         doctorId } = data;
 
+    if (!message || !senderRole || !patientId || !doctorId) {
+        return socket.emit("error", { message: "Invalid message format" });
+        }
+      
+
     // Save the message to the database
     const chatMessage = new PtoDChat({
       roomID: room,
@@ -56,7 +76,7 @@ io.on("connection", (socket) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 8000;
+const PORT = 8000;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
