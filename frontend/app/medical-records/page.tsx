@@ -13,7 +13,7 @@ export default function MedicalRecords() {
     const fetchMedicalRecords = async () => {
       try {
         // Replace with your MongoDB Data API endpoint and API key
-        const endpoint = "https://data.mongodb-api.com/app/data-abc123/endpoint/data/v1/action/find";
+        const endpoint = "https://localhost:5000";
         const apiKey = "process.env.MONGODB_API_KEY";
 
         const response = await fetch(endpoint, {
