@@ -46,8 +46,12 @@ export default function Home() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-[#FFFFFF]">
-                    <DropdownMenuItem>Login</DropdownMenuItem>
-                    <DropdownMenuItem>Signup</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/plogin">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/psignup">Signup</Link>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </DropdownMenuItem>
@@ -59,8 +63,12 @@ export default function Home() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-[#FFFFFF]">
-                    <DropdownMenuItem>Login</DropdownMenuItem>
-                    <DropdownMenuItem>Signup</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/dlogin">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/dsignup">Signup</Link>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </DropdownMenuItem>
