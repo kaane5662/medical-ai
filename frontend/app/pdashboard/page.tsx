@@ -111,7 +111,7 @@ export default function PatientDashboard() {
             <Link href="/pdashboard">Profile</Link>
           </Button>
           <Button className="bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-            <Link href="/logout">Logout</Link>
+            <Link href="/">Logout</Link>
           </Button>
         </div>
       </nav>
@@ -189,30 +189,32 @@ export default function PatientDashboard() {
           </Card>
 
           {/* Quick Actions Card */}
-          {/* Quick Actions Card */}
-<Card className="bg-[#FFFFFF] shadow-lg">
-  <CardHeader>
-    <CardTitle className="flex items-center gap-2">
-      <Stethoscope className="text-[#1F7A8C]" />
-      Quick Actions
-    </CardTitle>
-    <CardDescription>Quickly access important features.</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <div className="space-y-4">
-      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-        <Link href="https://calendly.com/swftt-inc/doctor-appointment">Book Appointment</Link>
-      </Button>
-      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-        <Link href="/request-refill">Request Medication Refill</Link>
-      </Button>
-      {/* Add the new "View Medical History" button */}
-      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-        <Link href="/medical-records">View Medical History</Link>
-      </Button>
-    </div>
-  </CardContent>
-</Card>
+            <Card className="bg-[#FFFFFF] shadow-lg">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                <Stethoscope className="text-[#1F7A8C]" />
+                Quick Actions
+                </CardTitle>
+                <CardDescription>Quickly access important features.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+                    <Link href="https://calendly.com/swftt-inc/doctor-appointment">Book Appointment</Link>
+                </Button>
+                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+                    <Link href="/request-refill">Request Medication Refill</Link>
+                </Button>
+                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+                    <Link href="/medical-records">View Medical History</Link>
+                </Button>
+                {/* Add the new "Recommendations" button */}
+                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+                    <Link href="/recommendations">Recommendations</Link>
+                </Button>
+                </div>
+            </CardContent>
+            </Card>
 
           {/* Chat Card */}
           <Card className="bg-[#FFFFFF] shadow-lg">
