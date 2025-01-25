@@ -1,9 +1,7 @@
-import { Request } from "express";
-
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
 
-const generateToken = (user:any) => {
+const generateToken = (user: { _id: { toString: () => any; }; _doc: any; }) => {
     
     console.log(user)
     return jwt.sign(
@@ -14,7 +12,7 @@ const generateToken = (user:any) => {
         , process.env.SECRET_JWT, {expiresIn: "5h"}); // Token expires in 1 hour
 };
 
-const generateAuthToken = (user:any) => {
+const generateAuthToken = (user: { _id: { toString: () => any; }; _doc: any; }) => {
     
     console.log(user)
     return jwt.sign(
@@ -26,7 +24,7 @@ const generateAuthToken = (user:any) => {
 };
 
 
-const verifyToken = (req:any, res:any, next:any) => {
+const verifyToken = (req: { cookies: { token: any; }; user: any; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { url: string; }): any; new(): any; }; }; }, next: () => void) => {
 
     // req.user = {}
     // req.user._id = "65d5428edf2c053b57e72ef2"
@@ -54,7 +52,7 @@ const verifyToken = (req:any, res:any, next:any) => {
     }
 };
 
-const verifyResetToken = (req, res, next) => {
+const verifyResetToken = (req: { body: { token: any; }; user: any; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message: string; }): void; new(): any; }; }; }, next: () => void) => {
 
     // req.user = {}
     // req.user._id = "65d5428edf2c053b57e72ef2"
@@ -85,4 +83,4 @@ const verifyResetToken = (req, res, next) => {
 
 
 
-export {generateToken, verifyToken, generateAuthToken, verifyResetToken}
+export{generateToken, verifyToken, generateAuthToken, verifyResetToken}
