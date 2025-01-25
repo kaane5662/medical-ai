@@ -61,7 +61,7 @@ export default function PatientDashboard() {
       <nav className="flex items-center justify-between px-8 py-4 bg-[#1F7A8C]">
         <div className="flex items-center gap-4">
           <Image
-            src="/company-logo.svg" // Replace with your company logo
+            src="/company-logo.png" // Replace with your company logo
             alt="Company Logo"
             width={40}
             height={40}
@@ -71,7 +71,7 @@ export default function PatientDashboard() {
 
         <div className="flex items-center gap-4">
           <Button className="bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-            <Link href="/profile">Profile</Link>
+            <Link href="/pdashboard">Profile</Link>
           </Button>
           <Button className="bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
             <Link href="/logout">Logout</Link>

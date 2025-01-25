@@ -24,7 +24,7 @@ export default function DoctorDashboard() {
       <nav className="flex items-center justify-between px-8 py-4 bg-[#1F7A8C]">
         <div className="flex items-center gap-4">
           <Image
-            src="/company-logo.svg" // Replace with your company logo
+            src="/company-logo.png" // Replace with your company logo
             alt="Company Logo"
             width={40}
             height={40}
