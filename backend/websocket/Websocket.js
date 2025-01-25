@@ -19,6 +19,34 @@ io.on("connection", (socket) =>{
     const room = `room_${socket.user_id}`
     socket.join(room)
 
-    Cha
-}
-)
+    PtoDChat.find({roomID})
+    .sort({timeStamp:1})
+    .then((message) => {
+        socket.emit("chat history", message);
+    });
+
+    socket.on("send_message", async (data) => {
+        const { message } = data;
+    
+        // Save the message to the database
+        const chatMessage = new ChatMessage({
+          roomID,
+          senderRole: socket.user.role, 
+          message,
+        });
+        await chatMessage.save();
+    
+        // Broadcast the message to the room
+        io.to(room).emit("receive_message", chatMessage);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("A user disconnected:", socket.user);
+      });
+
+});
+
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
