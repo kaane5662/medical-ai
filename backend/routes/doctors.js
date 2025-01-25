@@ -1,11 +1,9 @@
-import express, { Request } from "express"
+import express from "express"
 const router = express.Router()
-import { verifyToken } from "../jwtMiddleware"
-import Doctor from "../schemas/Doctor"
-import Log from "../schemas/Log"
-import Paitent from "../schemas/Patient"
+import { verifyToken } from "../jwtMiddleware.js"
 
-router.post("/",(req:Request<any>,res:any)=>{
+verifyToken
+router.post("/",(req,res)=>{
     const {firstName, lastName, specialty, doctorId, paitentName, hospitalName,} = req.body
 
 })
@@ -16,7 +14,7 @@ router.get("/",verifyToken,async(req,res)=>{
         const doctor = await Doctor.findOne({id:doctorId})
         if(doctor == null) res.status(404).json({error:"Not found"})
         res.status(200).json()
-    }catch(error:any){
+    }catch(error){
         console.log(error)
         res.status(500).json({error:"Unexpected error occured"})
     }
@@ -29,7 +27,7 @@ router.get("/patients",verifyToken,async(req,res)=>{
         const paitents = await Log.find({doctor:doctorId})
         if(paitents == null) res.status(404).json({error:"Not found"})
         res.status(200).json(paitents)
-    }catch(error:any){
+    }catch(error){
         console.log(error)
         res.status(500).json({error:"Unexpected error occured"})
     }
@@ -41,7 +39,7 @@ router.get("/patients/logs",verifyToken,async(req,res)=>{
         const logs = await Paitent.find({doctor:doctorId, paitent:patientId})
         if(logs == null) res.status(404).json({error:"Not found"})
         res.status(200).json(logs)
-    }catch(error:any){
+    }catch(error){
         console.log(error)
         res.status(500).json({error:"Unexpected error occured"})
     }
@@ -49,6 +47,7 @@ router.get("/patients/logs",verifyToken,async(req,res)=>{
 router.put("/patients/logs",verifyToken,async(req,res)=>{
     const {patientId} = req.body
     try{
+        
         const doctorId = await req.user._id
         const log = new Log({
             firstName:""
@@ -56,7 +55,7 @@ router.put("/patients/logs",verifyToken,async(req,res)=>{
         await log.save()
         
         res.status(201).json(log)
-    }catch(error:any){
+    }catch(error){
         console.log(error)
         res.status(500).json({error:"Unexpected error occured"})
     }
