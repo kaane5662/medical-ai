@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Calendar, Stethoscope, ClipboardList, User, Activity, MessageCircle } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Calendar, ClipboardList, MessageCircle, Stethoscope, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -170,7 +170,7 @@ export default function DoctorDashboard() {
                   <Link href="/dchatbox">Start New Chat with Patient</Link>
                 </Button>
                 <Button className="w-full bg-[#1F7A8C] text-[#FFFFFF] hover:bg-[#165E6F]">
-                  <Link href="/aichatbox">Chat with AI Companion</Link>
+                  <Link href="/daichatbox">Chat with AI Companion</Link>
                 </Button>
               </div>
             </CardContent>
