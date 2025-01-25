@@ -1,9 +1,10 @@
 'use client'; // Mark this as a Client Component
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 // Mock data for doctors and conversations
-const doctors = [
+const initialDoctors = [
 {
 id: 1,
 name: 'Dr. Smith',
@@ -44,8 +45,31 @@ const router = useRouter();
 const searchParams = useSearchParams();
 const doctorId = searchParams.get('doctorId'); // Get the selected doctor ID from the URL
 
+// State for managing doctors and the "Add Doctor" popup
+const [doctors, setDoctors] = useState(initialDoctors);
+const [showPopup, setShowPopup] = useState(false);
+const [newDoctor, setNewDoctor] = useState({
+name: '',
+hospital: '',
+number: '',
+});
+
 // Find the selected doctor based on the URL query parameter
 const selectedDoctor = doctors.find((doctor) => doctor.id === Number(doctorId));
+
+// Handle adding a new doctor
+const handleAddDoctor = () => {
+if (newDoctor.name && newDoctor.hospital && newDoctor.number) {
+    const newDoctorData = {
+    id: doctors.length + 1, // Generate a new ID
+    name: newDoctor.name,
+    conversations: [], // Initialize with no conversations
+    };
+    setDoctors([...doctors, newDoctorData]);
+    setNewDoctor({ name: '', hospital: '', number: '' });
+    setShowPopup(false);
+}
+};
 
 return (
 <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
@@ -82,7 +106,7 @@ return (
         <div
             className={`p-2 cursor-pointer ${
             !doctorId
-                ? 'bg-[#1F7A8C] text-white rounded-lg'
+                ? 'bg-[#ffffff] text-black rounded-lg'
                 : 'hover:bg-gray-100 rounded-lg'
             }`}
             onClick={() => router.push('/chatbox')} // Clear doctorId to show healthcare provider chat
@@ -109,6 +133,14 @@ return (
             </li>
             ))}
         </ul>
+
+        {/* Add Doctor Button */}
+        <button
+            onClick={() => setShowPopup(true)}
+            className="mt-4 w-full bg-[#1F7A8C] text-white py-2 px-4 rounded-lg hover:bg-[#1A6A7B] transition-colors"
+        >
+            Add Doctor
+        </button>
         </div>
     </div>
 
@@ -160,6 +192,52 @@ return (
         </div>
     </div>
     </div>
+
+    {/* Popup for Adding a Doctor */}
+    {showPopup && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-semibold text-[#1F7A8C] mb-4">Add a Doctor</h2>
+        <div className="space-y-4">
+            <input
+            type="text"
+            placeholder="Doctor's Full Name"
+            value={newDoctor.name}
+            onChange={(e) => setNewDoctor({ ...newDoctor, name: e.target.value })}
+            className="w-full p-2 border rounded-lg"
+            />
+            <input
+            type="text"
+            placeholder="Hospital"
+            value={newDoctor.hospital}
+            onChange={(e) => setNewDoctor({ ...newDoctor, hospital: e.target.value })}
+            className="w-full p-2 border rounded-lg"
+            />
+            <input
+            type="text"
+            placeholder="Phone Number"
+            value={newDoctor.number}
+            onChange={(e) => setNewDoctor({ ...newDoctor, number: e.target.value })}
+            className="w-full p-2 border rounded-lg"
+            />
+        </div>
+        <div className="mt-6 flex justify-end gap-4">
+            <button
+            onClick={() => setShowPopup(false)}
+            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+            >
+            Cancel
+            </button>
+            <button
+            onClick={handleAddDoctor}
+            className="bg-[#1F7A8C] text-white py-2 px-4 rounded-lg hover:bg-[#1A6A7B] transition-colors"
+            >
+            Add
+            </button>
+        </div>
+        </div>
+    </div>
+    )}
 </div>
 );
 };

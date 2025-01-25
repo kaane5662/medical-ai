@@ -4,30 +4,32 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { ClipboardList } from "lucide-react";
 import { useState, useEffect } from "react";
 
+// Define the MedicalRecord interface
+interface MedicalRecord {
+  _id: string;
+  timestamp: string;
+  glucose: number;
+  bloodPressure: string;
+  symptoms: string[];
+  medications: string[];
+  frequency: string;
+  diagnosis?: string;
+  description?: string;
+}
+
 export default function MedicalRecords() {
-  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMedicalRecords = async () => {
       try {
-        // Replace with your MongoDB Data API endpoint and API key
-        const endpoint = "https://localhost:5000";
-        const apiKey = "process.env.MONGODB_API_KEY";
-
-        const response = await fetch(endpoint, {
-          method: "POST",
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/patients/logs`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "api-key": apiKey,
           },
-          body: JSON.stringify({
-            dataSource: "Cluster0", // Replace with your cluster name
-            database: "your-database-name", // Replace with your database name
-            collection: "logs", // Replace with your collection name
-            filter: { patient: "PATIENT_ID" }, // Replace with the actual patient ID
-          }),
         });
 
         if (!response.ok) {
@@ -35,7 +37,7 @@ export default function MedicalRecords() {
         }
 
         const data = await response.json();
-        setMedicalRecords(data.documents);
+        setMedicalRecords(data);
       } catch (err) {
         console.error("Error fetching medical records:", err);
         setError("Failed to load medical records. Please try again later.");
