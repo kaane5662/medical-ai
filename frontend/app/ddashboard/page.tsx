@@ -121,7 +121,7 @@ export default function DoctorDashboard() {
             <CardContent>
                 <div className="space-y-4">
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                    <Link href="/book-appointment">Book Appointment</Link>
+                    <Link href="https://calendly.com/swftt-inc/doctor-appointment">Book Appointment</Link>
                 </Button>
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
                     <Link href="/request-refill">Request Medication Refill</Link>
