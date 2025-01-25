@@ -5,52 +5,55 @@ import { ClipboardList } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function MedicalRecords() {
-  // Example initial medical records data
-  const initialRecords = [
-    {
-      id: 1,
-      date: "2023-10-01",
-      bloodGlucose: "120 mg/dL",
-      bloodPressure: "120/80 mmHg",
-      symptoms: "Headache, Fatigue",
-      medications: "Paracetamol",
-      frequency: "Twice a day",
-    },
-    {
-      id: 2,
-      date: "2023-10-05",
-      bloodGlucose: "110 mg/dL",
-      bloodPressure: "118/78 mmHg",
-      symptoms: "Dizziness",
-      medications: "Ibuprofen",
-      frequency: "Once a day",
-    },
-  ];
+  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [medicalRecords, setMedicalRecords] = useState(initialRecords);
-
-  // Simulate updating records when a patient logs data
   useEffect(() => {
-    const handleLogUpdate = (event: CustomEvent) => {
-      const newLog = event.detail;
-      setMedicalRecords((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          date: new Date().toISOString().split("T")[0],
-          ...newLog,
-        },
-      ]);
+    const fetchMedicalRecords = async () => {
+      try {
+        // Replace with your MongoDB Data API endpoint and API key
+        const endpoint = "https://data.mongodb-api.com/app/data-abc123/endpoint/data/v1/action/find";
+        const apiKey = "process.env.MONGODB_API_KEY";
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "api-key": apiKey,
+          },
+          body: JSON.stringify({
+            dataSource: "Cluster0", // Replace with your cluster name
+            database: "your-database-name", // Replace with your database name
+            collection: "logs", // Replace with your collection name
+            filter: { patient: "PATIENT_ID" }, // Replace with the actual patient ID
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch medical records");
+        }
+
+        const data = await response.json();
+        setMedicalRecords(data.documents);
+      } catch (err) {
+        console.error("Error fetching medical records:", err);
+        setError("Failed to load medical records. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    // Listen for custom event (e.g., when a patient logs data)
-    window.addEventListener("logUpdate", handleLogUpdate);
-
-    // Cleanup event listener
-    return () => {
-      window.removeEventListener("logUpdate", handleLogUpdate);
-    };
+    fetchMedicalRecords();
   }, []);
+
+  if (loading) {
+    return <p>Loading medical records...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   return (
     <Card className="bg-[#FFFFFF] shadow-lg">
@@ -63,33 +66,51 @@ export default function MedicalRecords() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {medicalRecords.map((record) => (
-            <div key={record.id} className="p-4 bg-[#E1E5F2] rounded">
-              <p className="text-sm text-[#1F7A8C]">{record.date}</p>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div>
-                  <p className="font-medium">Blood Glucose</p>
-                  <p className="text-[#022B3A]">{record.bloodGlucose}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Blood Pressure</p>
-                  <p className="text-[#022B3A]">{record.bloodPressure}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Symptoms</p>
-                  <p className="text-[#022B3A]">{record.symptoms}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Medications</p>
-                  <p className="text-[#022B3A]">{record.medications}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Frequency</p>
-                  <p className="text-[#022B3A]">{record.frequency}</p>
+          {medicalRecords.length > 0 ? (
+            medicalRecords.map((record) => (
+              <div key={record._id} className="p-4 bg-[#E1E5F2] rounded">
+                <p className="text-sm text-[#1F7A8C]">
+                  {new Date(record.timestamp).toLocaleDateString()}
+                </p>
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <p className="font-medium">Blood Glucose</p>
+                    <p className="text-[#022B3A]">{record.glucose} mg/dL</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Blood Pressure</p>
+                    <p className="text-[#022B3A]">{record.bloodPressure} mmHg</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Symptoms</p>
+                    <p className="text-[#022B3A]">{record.symptoms.join(", ")}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Medications</p>
+                    <p className="text-[#022B3A]">{record.medications.join(", ")}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Frequency</p>
+                    <p className="text-[#022B3A]">{record.frequency}</p>
+                  </div>
+                  {record.diagnosis && (
+                    <div>
+                      <p className="font-medium">Diagnosis</p>
+                      <p className="text-[#022B3A]">{record.diagnosis}</p>
+                    </div>
+                  )}
+                  {record.description && (
+                    <div>
+                      <p className="font-medium">Notes</p>
+                      <p className="text-[#022B3A]">{record.description}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No medical records found.</p>
+          )}
         </div>
       </CardContent>
     </Card>

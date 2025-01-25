@@ -204,7 +204,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-
 router.post("/aichat",verifyToken,async(req,res)=>{
   const {patientId} = req.body
   try{
