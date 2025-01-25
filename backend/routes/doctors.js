@@ -1,6 +1,7 @@
 import express from "express"
 const router = express.Router()
 import { verifyToken } from "../jwtMiddleware.js"
+import Doctor from "../schemas/Doctor.js"
 
 verifyToken
 router.post("/",(req,res)=>{
@@ -60,11 +61,19 @@ router.put("/patients/logs",verifyToken,async(req,res)=>{
         res.status(500).json({error:"Unexpected error occured"})
     }
 })
-
-
-
-router.post("/protected",verifyToken,async(req,res)=>{
-
+router.put("/patients/logs",verifyToken,async(req,res)=>{
+    const {patientId} = req.body
+    try{
+        
+        const doctorId = await req.user._id
+        
+        res.status(201).json(log)
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error:"Unexpected error occured"})
+    }
 })
+
+
 
 export {router}

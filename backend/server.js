@@ -36,7 +36,8 @@ mongoose.connect(process.env.MONGO_URL, {
 
 
 const corsOptions = {
-    origin: process.env.CLIENT_DOMAIN,
+    origin: "http://localhost:3000",
+    origin: [],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,  // Enable cookies and authentication headers
 };

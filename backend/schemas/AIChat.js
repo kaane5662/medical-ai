@@ -14,7 +14,7 @@ const aiChatMessageSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Patient"
     },
-    chatId:{
+    aiChat:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"AIChat"
     },

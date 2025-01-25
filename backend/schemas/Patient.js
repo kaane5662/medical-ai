@@ -48,11 +48,15 @@ const paitentSchema = new mongoose.Schema({
         required:true
     },
     username:{
-        typr:String,
+        type:String,
         required:true
     },
+    password:{
+        type: String,
+        required:true,
+    }
     
   });
 
-  const Paitent = mongoose.models?.Paitent || mongoose.model("Paitent", paitentSchema)
-  export default Paitent
+  const Patient = mongoose.models?.Paitent || mongoose.model("Paitent", paitentSchema)
+  export default Patient
