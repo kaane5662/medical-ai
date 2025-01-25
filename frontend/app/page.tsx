@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-black">
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
       <header className="text-center mb-10">
         <Image
           src="/next.svg"
