@@ -61,6 +61,7 @@ router.put("/patients/logs",verifyToken,async(req,res)=>{
         res.status(500).json({error:"Unexpected error occured"})
     }
 })
+
 router.put("/patients/logs",verifyToken,async(req,res)=>{
     const {patientId} = req.body
     try{

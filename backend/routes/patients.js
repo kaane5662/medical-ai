@@ -1,14 +1,15 @@
-import express, { Request, Response } from "express";
-import Patient from "../schemas/Patient";
+import express from "express";
 import mongoose from "mongoose";
-import { verifyToken } from "../jwtMiddleware"
-import { AIChat, AIMessage } from "../schemas/AIChat";
+import { AIChat, AIMessage } from "../schemas/AIChat.js";
 import { randomUUID } from "crypto";
+import Patient from "../schemas/Patient.js";
+import { verifyToken, generateToken } from "../jwtMiddleware.js";
 import bcryptjs from "bcryptjs"
-const router = express.Router();
-import Anthropic from "@anthropic-ai/sdk/index.mjs";
-const anthropic = Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
+import Anthropic from "@anthropic-ai/sdk";
+import Doctor from "../schemas/Doctor.js";
+const anthropic = new Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
 
+const router = express.Router();
 // POST route to create a new patient
 router.post("/", async(req, res ) => {
   try{
@@ -22,11 +23,11 @@ router.post("/", async(req, res ) => {
       username,
       email,
       password,
-      confirmPassword
+      confirmpassword
     } = req.body;
     if(confirmpassword != password) return res.status(500).json({error:"Passwords do not match!"})
     if(password.length < 8) return res.status(500).json({error: "Password must be at least 8 characters!"})
-    if(email.split("@").length != 2 || email.split(".").length != 2) return res.status(500).json({error:"Must be a valid email!"})
+    // if(email.split("@").length != 2 || email.split(".").length != 2) return res.status(500).json({error:"Must be a valid email!"})
     const hashedPassword = await bcryptjs.hash(password, 10)
     const newPatient = new Patient({
       firstName,
@@ -46,6 +47,25 @@ router.post("/", async(req, res ) => {
     return res.status(200).json("Cookies set")
   }catch(error){
     console.log(error)
+    if (error.name === 'ValidationError') {
+      // Handle Mongoose validation errors
+      const errors = Object.values(error.errors).map(err => ({
+          field: err.path,
+          message: err.message
+      }));
+      return res.status(400).json({
+          error: "Validation Error",
+          details: errors
+      });
+    }
+    if (error.code === 11000) {
+      // Extract the duplicate field(s)
+      const duplicateField = Object.keys(error.keyValue)[0];
+      const duplicateValue = error.keyValue[duplicateField];
+      res.status(400).json({
+        error: `Duplicate value found: ${duplicateField} '${duplicateValue}' is already in use.`,
+      });
+    }
   }
 
 });
@@ -60,7 +80,7 @@ router.put("/", async(req, res ) => {
     if(patient == null) return res.status(404).json({error:"Not found"})
     const matchedPassword = await bcryptjs.compare(password, patient.password)
     if(!matchedPassword) return res.status(500).json({message: "Invalid password"})
-    const token = generateToken(User)
+    const token = generateToken(patient)
     res.cookie("token", token, { maxAge: 9000000,secure: process.env.NODE_ENV === "production", httpOnly: true, path: "/", sameSite: 'Lax'  })
     return res.status(200).json("Cookies set")
    
@@ -98,6 +118,44 @@ router.get("/", async (req , res ) => {
     });
   }
 });
+
+
+router.post("/doctors", verifyToken ,async(req,res)=>{
+  const {firstName, lastName, specialty, hospitalName} =  req.body
+
+  try {
+    const patientId = req.user._id
+    const doctor = await Doctor.findById({
+      firstName,
+      lastName,
+      specialty,
+      hospitalName
+    });
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found." });
+    }
+    // Find the patient and update their doctors array
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found." });
+    }
+
+    // Check if the doctor is already added
+    if (patient.doctors.includes(doctor._id)) {
+      return res.status(400).json({ error: "Doctor already assigned to this patient." });
+    }
+
+    // Add the doctor to the patient's doctors array
+    patient.doctors.push(doctor._id);
+    await patient.save();
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+})
 
 // GET route to fetch a single patient by ID
 router.get("/:id", async (req , res ) => {
@@ -293,4 +351,4 @@ router.put("/aichat/:id",[verifyToken],async(req,res)=>{
 
 
 
-export default router;
+export {router};

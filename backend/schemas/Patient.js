@@ -1,4 +1,4 @@
-import exp from "constants";
+
 import mongoose from "mongoose";
 
 const paitentSchema = new mongoose.Schema({
@@ -41,7 +41,9 @@ const paitentSchema = new mongoose.Schema({
     },
     email:{
         type:String,
-        required:true
+        required:true,
+        unique: true, // Ensures no duplicate emails
+        match: [/.+@.+\..+/, "Please enter a valid email address"], // Email validation
     },
     hasInsurance:{
         type:String,
@@ -49,14 +51,17 @@ const paitentSchema = new mongoose.Schema({
     },
     username:{
         type:String,
-        required:true
+        required:true,
+        unique: true, // Ensures no duplicate emails
     },
     password:{
         type: String,
         required:true,
+        minlength: 8, // Minimum length of 8 characters
+        maxlength: 128,
     }
     
   });
 
-  const Patient = mongoose.models?.Paitent || mongoose.model("Paitent", paitentSchema)
+  const Patient = mongoose.models?.Patient || mongoose.model("Patient", paitentSchema)
   export default Patient

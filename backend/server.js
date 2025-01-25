@@ -2,6 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import {router as DoctorRouter} from "./routes/doctors.js"
+import {router as PatientRouter} from "./routes/patients.js"
 // const Transactions = require("./schemas/Transactions")
 // const nodemailer = require("nodemailer")
 // const qr = require("qr-image")
@@ -47,8 +48,9 @@ app.use(cookieParser());
 
 app.use(express.json())
 app.use("/doctors", DoctorRouter)
+app.use("/patients", PatientRouter)
 
 
 //routes
 
-app.listen(5000, ()=>{console.log("Listening on port 8000!")})
+app.listen(5000, ()=>{console.log("Listening on port 5000!")})
