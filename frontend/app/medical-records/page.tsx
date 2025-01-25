@@ -4,22 +4,32 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { ClipboardList } from "lucide-react";
 import { useState, useEffect } from "react";
 
+// Define the MedicalRecord interface
+interface MedicalRecord {
+  _id: string;
+  timestamp: string;
+  glucose: number;
+  bloodPressure: string;
+  symptoms: string[];
+  medications: string[];
+  frequency: string;
+  diagnosis?: string;
+  description?: string;
+}
+
 export default function MedicalRecords() {
-  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMedicalRecords = async () => {
       try {
-       
-
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/patients/logs`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-      
         });
 
         if (!response.ok) {
