@@ -37,7 +37,7 @@ export default function DoctorDashboard() {
             <Link href="/profile">Profile</Link>
           </Button>
           <Button className="bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-            <Link href="/logout">Logout</Link>
+            <Link href="/">Logout</Link>
           </Button>
         </div>
       </nav>
