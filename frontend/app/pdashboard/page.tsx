@@ -17,6 +17,7 @@ export default function PatientDashboard() {
     symptoms: "",
     medications: "",
     frequency: "",
+    notes: "",
   });
 
   const handleDateClick = (date: Date) => {
@@ -37,6 +38,7 @@ export default function PatientDashboard() {
         symptoms: "",
         medications: "",
         frequency: "",
+        notes: "",
       });
     }
   };
@@ -309,6 +311,13 @@ export default function PatientDashboard() {
                 placeholder="Frequency (e.g., Twice a day)"
                 value={currentLog.frequency}
                 onChange={(e) => setCurrentLog({ ...currentLog, frequency: e.target.value })}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="text"
+                placeholder="Any Additional Notes"
+                value={currentLog.frequency}
+                onChange={(e) => setCurrentLog({ ...currentLog, notes: e.target.value })}
                 className="w-full p-2 border rounded"
               />
             </div>
