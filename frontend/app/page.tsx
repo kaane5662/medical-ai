@@ -1,56 +1,93 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
-      <header className="text-center mb-10">
+    <div className="min-h-screen bg-[#022B3A] text-gray-900">
+      {/* Navbar */}
+      <nav className="flex items-center justify-between px-8 py-4 bg-[#1F7A8C]">
         <Image
-          src="/next.svg"
-          alt="Next.js logo"
-          width={150}
-          height={35}
-          className="dark:invert mx-auto"
+          src="/company-logo.svg" // Replace with your company logo
+          alt="Company Logo"
+          width={50}
+          height={50}
         />
-        <h1 className="text-3xl font-bold mt-4 text-gray-800 dark:text-gray-100">
-          Welcome to Your App
+
+        <ul className="flex gap-8 text-lg font-semibold text-[#FFFFFF]">
+          <li className="hover:underline">Home</li>
+          <li className="hover:underline">Mission</li>
+          <li className="hover:underline">Testimony</li>
+          <li className="hover:underline">About</li>
+        </ul>
+
+        <div className="flex gap-4 items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-[#BFDBF7] text-[#022B3A] px-4 py-2 rounded">
+                Login
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-[#E1E5F2]">
+              <DropdownMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="text-[#022B3A]">
+                      Patient
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-[#FFFFFF]">
+                    <DropdownMenuItem>Login</DropdownMenuItem>
+                    <DropdownMenuItem>Signup</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="text-[#022B3A]">
+                      Doctor
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-[#FFFFFF]">
+                    <DropdownMenuItem>Login</DropdownMenuItem>
+                    <DropdownMenuItem>Signup</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header className="flex flex-col items-center justify-center text-center py-20">
+        <Image
+          src="/company-logo.svg" // Replace with your company logo
+          alt="Company Logo"
+          width={150}
+          height={150}
+          className="mb-6"
+        />
+        <h1 className="text-5xl font-bold mb-4 text-[#BFDBF7]">
+          Your Company Name
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Explore the power of Next.js and ShadCN components.
+        <p className="text-xl font-medium text-[#E1E5F2]">
+          Inspiring Future, Today. {/* Replace with your slogan */}
         </p>
       </header>
 
-      <main className="flex flex-col items-center gap-8 w-full max-w-lg">
-        <Card className="w-full">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
-              Interactive Features
-            </h2>
-            <form className="flex flex-col gap-4">
-              <Input
-                type="text"
-                placeholder="Enter your name"
-                className="w-full"
-              />
-              <Button type="submit" className="w-full">
-                Submit
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="flex gap-4">
-          <Button variant="default">Default Theme</Button>
-          <Button variant="secondary">Secondary Theme</Button>
-        </div>
+      {/* Call to Action */}
+      <main className="flex justify-center mt-10">
+        <Button className="px-8 py-4 text-lg font-semibold" style={{ backgroundColor: "#BFDBF7", color: "#022B3A" }}>
+          Get Started
+        </Button>
       </main>
 
-      <footer className="mt-10 text-center text-gray-500 dark:text-gray-400">
+      {/* Footer */}
+      <footer className="mt-20 text-center text-sm text-[#E1E5F2]">
         <p>
-          Built with <a href="https://nextjs.org" className="underline">Next.js</a>{" "}
-          and <a href="https://shadcn.dev" className="underline">ShadCN</a>.
+          © {new Date().getFullYear()} Your Company Name. All rights reserved.
         </p>
       </footer>
     </div>
