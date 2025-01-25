@@ -1,10 +1,9 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { io } from "socket.io-client";
-import { socket } from "server/router";
-import PtoDChat from "../schemas/PtoDChat.js";
+import PtoDChat from "../schemas/PtoDChat.js"; // Adjust the path to your schema
 
+const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -12,69 +11,52 @@ const io = new Server(server, {
   },
 });
 
+// WebSocket connection handling
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
-io.on("connection", (socket) =>{
-    console.log("YiPPPE", socket.user)
+  // Join a room based on user ID
+  const room = `room_${socket.user_id}`; // Ensure `socket.user_id` is set
+  socket.join(room);
 
-    const room = `room_${socket.user_id}`
-    socket.join(room)
-
-    PtoDChat.find({roomID})
-    .sort({timeStamp:1})
-    .then((message) => {
-        socket.emit("chat history", message);
+  // Fetch chat history for the room
+  PtoDChat.find({ roomID: room })
+    .sort({ timeStamp: 1 })
+    .populate("patient doctor")
+    .then((messages) => {
+      socket.emit("chat_history", messages); // Emit chat history to the client
     });
 
-    socket.on("send_message", async (data) => {
-        const { message } = data;
-    
-        // Save the message to the database
-        const chatMessage = new ChatMessage({
-          roomID,
-          senderRole: socket.user.role, 
-          message,
-        });
-        await chatMessage.save();
-    
-        // Broadcast the message to the room
-        io.to(room).emit("receive_message", chatMessage);
-      });
+  // Handle incoming messages
+  socket.on("send_message", async (data) => {
+    const { 
+        message, 
+        senderRole, 
+        patientId,
+        doctorId } = data;
 
-      socket.on("disconnect", () => {
-        console.log("A user disconnected:", socket.user);
-      });
+    // Save the message to the database
+    const chatMessage = new PtoDChat({
+      roomID: room,
+      senderRole,
+      message,
+      patient: patientId,
+      doctor: doctorId,
+    });
+    await chatMessage.save();
 
+    // Broadcast the message to the room
+    io.to(room).emit("receive_message", chatMessage);
+  });
+
+  // Handle disconnection
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
 });
 
+// Start the server
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-app.get("/", (req, res) => {
-    res.send("Express.js with WebSocket!");
-  });
-  
-
-
-
-
-
-  const socket = new WebSocket("ws://localhost:5000");
-
-  socket.onopen = () => {
-    console.log("WebSocket connection established.");
-    socket.send("Hello, Server!");
-  };
-  
-  socket.onmessage = (event) => {
-    console.log("Message from server:", event.data);
-  };
-  
-  socket.onclose = () => {
-    console.log("WebSocket connection closed.");
-  };
-  
-  socket.onerror = (error) => {
-    console.error("WebSocket error:", error);
-  };

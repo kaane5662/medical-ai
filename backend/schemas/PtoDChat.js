@@ -1,35 +1,38 @@
 import mongoose from "mongoose";
 
 const patientToDoctorSchema = new mongoose.Schema({
-    roomID:{
-        type:String,
-        required:true,
-    },
+  roomID: {
+    type: String,
+    required: true,
+  },
 
-    senderRole:{
-        type:String,
-        required:true,
-    },
+  senderRole: {
+    type: String,
+    required: true,
+  },
 
-    message:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true
-    },
+  message: {
+    type: String,
+    required: true,
+  },
 
-    timeStamp:{
-        type:
-            Date, default: Date.now,
-            required:true
-    },
+  timeStamp: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
 
-    patient:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Patient"
-    },
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+  },
 
-    
-    timestamp: { type: Date, default: Date.now }, 
-})
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doctor",
+  },
+});
 
-const PtoDChat = mongoose.models?.PtoDChat || mongoose.model("PtoDChat", pTodChatSchema)
-export default PtoDChat
+const PtoDChat =
+  mongoose.models?.PtoDChat || mongoose.model("PtoDChat", patientToDoctorSchema);
+export default PtoDChat;
