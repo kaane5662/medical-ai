@@ -9,7 +9,7 @@ export default function About() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-4 bg-[#1F7A8C]">
         <Image
-          src="/company-logo.svg" // Replace with your company logo
+          src="/company-logo.png" // Replace with your company logo
           alt="Company Logo"
           width={50}
           height={50}
