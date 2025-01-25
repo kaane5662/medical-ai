@@ -24,22 +24,59 @@ export default function PatientDashboard() {
     setSelectedDate(date);
   };
 
-  const handleLogSubmit = () => {
+  const handleLogSubmit = async () => {
     if (selectedDate) {
       const dateKey = selectedDate.toISOString().split("T")[0];
-      setLogEntries((prev) => ({
-        ...prev,
-        [dateKey]: { ...currentLog },
-      }));
-      setIsModalOpen(false);
-      setCurrentLog({
-        bloodGlucose: "",
-        bloodPressure: "",
-        symptoms: "",
-        medications: "",
-        frequency: "",
-        notes: "",
-      });
+
+      // Prepare the log data
+      const logData = {
+        symptoms: currentLog.symptoms.split(",").map((s) => s.trim()), // Convert symptoms string to array
+        glucose: parseFloat(currentLog.bloodGlucose), // Convert to number
+        bloodPressure: parseFloat(currentLog.bloodPressure), // Convert to number
+        medications: currentLog.medications.split(",").map((m) => m.trim()), // Convert medications string to array
+        frequency: currentLog.frequency,
+        timestamp: selectedDate,
+        description: currentLog.notes,
+        patient: "PATIENT_ID", // Replace with the actual patient ID (e.g., from session or context)
+        doctor: "DOCTOR_ID", // Replace with the actual doctor ID (e.g., from session or context)
+      };
+
+      try {
+        // Send the log data to the backend using fetch
+        const response = await fetch("/api/logs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(logData),
+        });
+
+        if (response.ok) {
+          // Update the local state with the new log entry
+          setLogEntries((prev) => ({
+            ...prev,
+            [dateKey]: { ...currentLog },
+          }));
+
+          // Close the modal and reset the form
+          setIsModalOpen(false);
+          setCurrentLog({
+            bloodGlucose: "",
+            bloodPressure: "",
+            symptoms: "",
+            medications: "",
+            frequency: "",
+            notes: "",
+          });
+
+          alert("Log saved successfully!");
+        } else {
+          throw new Error("Failed to save log.");
+        }
+      } catch (error) {
+        console.error("Error saving log:", error);
+        alert("Failed to save log. Please try again.");
+      }
     }
   };
 
@@ -152,25 +189,30 @@ export default function PatientDashboard() {
           </Card>
 
           {/* Quick Actions Card */}
-          <Card className="bg-[#FFFFFF] shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Stethoscope className="text-[#1F7A8C]" />
-                Quick Actions
-              </CardTitle>
-              <CardDescription>Quickly access important features.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/book-appointment">Book Appointment</Link>
-                </Button>
-                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/request-refill">Request Medication Refill</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Quick Actions Card */}
+<Card className="bg-[#FFFFFF] shadow-lg">
+  <CardHeader>
+    <CardTitle className="flex items-center gap-2">
+      <Stethoscope className="text-[#1F7A8C]" />
+      Quick Actions
+    </CardTitle>
+    <CardDescription>Quickly access important features.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-4">
+      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+        <Link href="/book-appointment">Book Appointment</Link>
+      </Button>
+      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+        <Link href="/request-refill">Request Medication Refill</Link>
+      </Button>
+      {/* Add the new "View Medical History" button */}
+      <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+        <Link href="/medical-records">View Medical History</Link>
+      </Button>
+    </div>
+  </CardContent>
+</Card>
 
           {/* Chat Card */}
           <Card className="bg-[#FFFFFF] shadow-lg">
@@ -184,10 +226,10 @@ export default function PatientDashboard() {
             <CardContent>
               <div className="space-y-4">
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/chat-ai">Chat with AI Companion</Link>
+                  <Link href="/aichatbox">Chat with AI Companion</Link>
                 </Button>
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/chat-doctor">Chat with Doctor</Link>
+                  <Link href="/chatbox">Chat with Doctor</Link>
                 </Button>
               </div>
             </CardContent>

@@ -109,25 +109,30 @@ export default function DoctorDashboard() {
           </Card>
 
           {/* Quick Actions Card */}
-          <Card className="bg-[#FFFFFF] shadow-lg">
+          {/* Quick Actions Card */}
+            <Card className="bg-[#FFFFFF] shadow-lg">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                 <Stethoscope className="text-[#1F7A8C]" />
                 Quick Actions
-              </CardTitle>
-              <CardDescription>Quickly access important features.</CardDescription>
+                </CardTitle>
+                <CardDescription>Quickly access important features.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+                <div className="space-y-4">
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/prescribe-medication">Prescribe Medication</Link>
+                    <Link href="/book-appointment">Book Appointment</Link>
                 </Button>
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/schedule-appointment">Schedule Appointment</Link>
+                    <Link href="/request-refill">Request Medication Refill</Link>
                 </Button>
-              </div>
+                {/* Add the new "View Medical History" button */}
+                <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
+                    <Link href="/medical-records">View Medical History</Link>
+                </Button>
+                </div>
             </CardContent>
-          </Card>
+        </Card>
 
           {/* Health Metrics Overview Card */}
           <Card className="bg-[#FFFFFF] shadow-lg">
@@ -162,10 +167,10 @@ export default function DoctorDashboard() {
                   <Link href="/chat-patients">View Chat History</Link>
                 </Button>
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                  <Link href="/start-chat">Start New Chat with Patient</Link>
+                  <Link href="/dchatbox">Start New Chat with Patient</Link>
                 </Button>
                 <Button className="w-full bg-[#1F7A8C] text-[#FFFFFF] hover:bg-[#165E6F]">
-                  <Link href="/chat-ai">Chat with AI Companion</Link>
+                  <Link href="/aichatbox">Chat with AI Companion</Link>
                 </Button>
               </div>
             </CardContent>
