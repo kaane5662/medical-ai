@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function Mission() {
   return (
     <div className="min-h-screen bg-[#022B3A] text-gray-900">
       {/* Navbar */}
@@ -26,7 +26,7 @@ export default function Home() {
             <Link href="/testimony">Testimony</Link>
           </li>
           <li className="hover:underline">
-            <Link href="/about">About</Link>
+            <Link href="/">About</Link>
           </li>
         </ul>
 
@@ -69,36 +69,39 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header id="home" className="flex flex-col items-center justify-center text-center py-20">
-        <Image
-          src="/company-logo.svg" // Replace with your company logo
-          alt="Company Logo"
-          width={150}
-          height={150}
-          className="mb-6"
-        />
-        <h1 className="text-5xl font-bold mb-4 text-[#BFDBF7]">
-          Your Company Name
-        </h1>
-        <p className="text-xl font-medium text-[#E1E5F2]">
-          Inspiring Future, Today. {/* Replace with your slogan */}
-        </p>
-      </header>
-
-      {/* Call to Action */}
-      <main className="flex justify-center mt-10">
-        <Button className="px-8 py-4 text-lg font-semibold" style={{ backgroundColor: "#BFDBF7", color: "#022B3A" }}>
-          Get Started
-        </Button>
-      </main>
-
-      {/* Footer */}
-      <footer className="mt-20 text-center text-sm text-[#E1E5F2]">
-        <p>
-          © {new Date().getFullYear()} Your Company Name. All rights reserved.
-        </p>
-      </footer>
+      {/* Mission Statement Section */}
+      <div
+        id="mission"
+        className="relative min-h-screen text-secondary flex justify-center items-center"
+      >
+        <div className="justify-center items-center flex flex-col gap-12 p-12">
+          <h1 className="text-5xl font-bold max-md:text-4xl text-[#BFDBF7]">
+            Our Mission
+          </h1>
+          <div className="max-w-3xl text-center">
+            <p className="text-xl font-medium text-[#E1E5F2]">
+              At <span className="font-bold text-[#FFD700]">Your Company Name</span>, our mission is to revolutionize the way healthcare is delivered by leveraging cutting-edge technology and innovative solutions. We are committed to:
+            </p>
+            <ul className="mt-6 text-lg text-[#E1E5F2] list-disc list-inside">
+              <li className="mb-3">
+                <span className="font-semibold text-[#FFD700]">Enhancing Patient Safety:</span> Reducing medical errors and ensuring the highest standards of care.
+              </li>
+              <li className="mb-3">
+                <span className="font-semibold text-[#FFD700]">Empowering Healthcare Professionals:</span> Providing tools and insights to improve decision-making and efficiency.
+              </li>
+              <li className="mb-3">
+                <span className="font-semibold text-[#FFD700]">Driving Innovation:</span> Continuously pushing the boundaries of what's possible in healthcare technology.
+              </li>
+              <li className="mb-3">
+                <span className="font-semibold text-[#FFD700]">Building Trust:</span> Fostering transparency and accountability in every aspect of our work.
+              </li>
+            </ul>
+            <p className="mt-6 text-xl font-medium text-[#E1E5F2]">
+              Together, we are shaping a future where healthcare is safer, smarter, and more accessible for everyone.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
