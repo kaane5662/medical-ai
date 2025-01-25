@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { verifyToken } from "../jwtMiddleware.js"
 import { socket } from "server/router";
+import PtoDChat from "../schemas/PtoDChat.js";
 
 const server = http.createServer(app);
 const io = new Server(server, {
