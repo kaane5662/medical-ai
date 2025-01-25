@@ -1,7 +1,9 @@
+import { Request } from "express";
+
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
 
-const generateToken = (user) => {
+const generateToken = (user:any) => {
     
     console.log(user)
     return jwt.sign(
@@ -12,7 +14,7 @@ const generateToken = (user) => {
         , process.env.SECRET_JWT, {expiresIn: "5h"}); // Token expires in 1 hour
 };
 
-const generateAuthToken = (user) => {
+const generateAuthToken = (user:any) => {
     
     console.log(user)
     return jwt.sign(
@@ -24,7 +26,7 @@ const generateAuthToken = (user) => {
 };
 
 
-const verifyToken = (req, res, next) => {
+const verifyToken = (req:any, res:any, next:any) => {
 
     // req.user = {}
     // req.user._id = "65d5428edf2c053b57e72ef2"
@@ -83,4 +85,4 @@ const verifyResetToken = (req, res, next) => {
 
 
 
-module.exports = {generateToken, verifyToken, generateAuthToken, verifyResetToken}
+export {generateToken, verifyToken, generateAuthToken, verifyResetToken}

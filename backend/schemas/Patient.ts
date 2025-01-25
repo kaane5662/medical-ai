@@ -20,19 +20,37 @@ const paitentSchema = new mongoose.Schema({
         ref: "Doctor",
       },
     ],
+    
 
-    insuranceId: {
+
+    insuranceNumber: {
         type:String,
-        required: true
+        required: false
     },
     insurancePlan: {
         type:String,
-        required:true
+        required:false
+    },
+    insuranceProvider: {
+        type:String,
+        required:false
+    },
+    tosAccepted:{
+        type:Boolean,
+        required:false
     },
     email:{
         type:String,
         required:true
     },
+    hasInsurance:{
+        type:String,
+        required:true
+    },
+    username:{
+        typr:String,
+        required:true
+    }
   });
 
   const Paitent = mongoose.models?.Paitent || mongoose.model("Paitent", paitentSchema)
