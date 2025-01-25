@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv').config();
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
 
-const generateToken = (user: { _id: { toString: () => any; }; _doc: any; }) => {
+const generateToken = (user) => {
     
     console.log(user)
     return jwt.sign(
@@ -12,7 +13,7 @@ const generateToken = (user: { _id: { toString: () => any; }; _doc: any; }) => {
         , process.env.SECRET_JWT, {expiresIn: "5h"}); // Token expires in 1 hour
 };
 
-const generateAuthToken = (user: { _id: { toString: () => any; }; _doc: any; }) => {
+const generateAuthToken = (user) => {
     
     console.log(user)
     return jwt.sign(
@@ -24,7 +25,7 @@ const generateAuthToken = (user: { _id: { toString: () => any; }; _doc: any; }) 
 };
 
 
-const verifyToken = (req: { cookies: { token: any; }; user: any; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { url: string; }): any; new(): any; }; }; }, next: () => void) => {
+const verifyToken = (req, res, next) => {
 
     // req.user = {}
     // req.user._id = "65d5428edf2c053b57e72ef2"
@@ -52,7 +53,7 @@ const verifyToken = (req: { cookies: { token: any; }; user: any; }, res: { statu
     }
 };
 
-const verifyResetToken = (req: { body: { token: any; }; user: any; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message: string; }): void; new(): any; }; }; }, next: () => void) => {
+const verifyResetToken = (req , res , next) => {
 
     // req.user = {}
     // req.user._id = "65d5428edf2c053b57e72ef2"
@@ -83,4 +84,4 @@ const verifyResetToken = (req: { body: { token: any; }; user: any; }, res: { sta
 
 
 
-export{generateToken, verifyToken, generateAuthToken, verifyResetToken}
+export {generateToken, verifyToken, generateAuthToken, verifyResetToken}

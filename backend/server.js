@@ -1,15 +1,16 @@
 import express from "express"
-const mongoose = require("mongoose")
-const cors = require("cors")
-import {router as DoctorRouter} from "./routes/doctors"
+import mongoose from "mongoose"
+import cors from "cors"
+import {router as DoctorRouter} from "./routes/doctors.js"
 // const Transactions = require("./schemas/Transactions")
 // const nodemailer = require("nodemailer")
 // const qr = require("qr-image")
 const app = express()
 // const path = require("path")
-require("dotenv").config()
+import dotenv from "dotenv"
+dotenv.config()
 // const stripe = require("stripe")(process.env.STRIPE_KEY)
-const cookieParser = require('cookie-parser');
+import cookieParser from "cookie-parser"
 // const {sendStripeVerifcationProcessing, sendStripeVerificationVerified, sendStripeVerificationDenied, sendStripeBoarded, sendTicketConfirmation} = require("./helpers/emailer")
 
 
@@ -27,7 +28,7 @@ mongoose.connect(process.env.MONGO_URL, {
     useUnifiedTopology: true
     })
     .then(()=> console.log("DB connected!"))
-    .catch((error:any)=>{
+    .catch((error)=>{
         console.log(error.message)
 })
 

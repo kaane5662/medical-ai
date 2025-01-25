@@ -2,11 +2,13 @@ import express, { Request, Response } from "express";
 import Paitent from "../schemas/Patient";
 import mongoose from "mongoose";
 import { verifyToken } from "../jwtMiddleware"
+import { AIChat } from "../schemas/AIChat";
+import { randomUUID } from "crypto";
 const router = express.Router();
 
 
 // POST route to create a new patient
-router.post("/", (req: Request<any>, res: any) => {
+router.post("/", (req, res ) => {
     const {
       firstName,
       lastName,
@@ -18,66 +20,66 @@ router.post("/", (req: Request<any>, res: any) => {
     } = req.body;
 });
 
-router.get("/", verifyToken, async(res , ))
+// router.get("/", verifyToken, async(res , ))
 
 
 
-    // Validate required fields
-    if (!firstName || !lastName || !insuranceId || !insurancePlan || !email) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields: firstName, lastName, insuranceId, insurancePlan, email",
-      });
-    }
+//     // Validate required fields
+//     if (!firstName || !lastName || !insuranceId || !insurancePlan || !email) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing required fields: firstName, lastName, insuranceId, insurancePlan, email",
+//       });
+//     }
 
-    // Create a new patient document
-    const newPatient = new Paitent({
-      firstName,
-      lastName,
-      insuranceId,
-      insurancePlan,
-      email,
-      doctors: doctors || [], // Optional field
-      logs: logs || [], // Optional field
-    });
+//     // Create a new patient document
+//     const newPatient = new Paitent({
+//       firstName,
+//       lastName,
+//       insuranceId,
+//       insurancePlan,
+//       email,
+//       doctors: doctors || [], // Optional field
+//       logs: logs || [], // Optional field
+//     });
 
-    // Save the patient to the database
-    const savedPatient = await newPatient.save();
+//     // Save the patient to the database
+//     const savedPatient = await newPatient.save();
 
-    // Return the saved patient
-    return res.status(201).json({
-      success: true,
-      message: "Patient created successfully",
-      data: savedPatient,
-    });
+//     // Return the saved patient
+//     return res.status(201).json({
+//       success: true,
+//       message: "Patient created successfully",
+//       data: savedPatient,
+//     });
 
-    // Handle Mongoose validation errors
-    if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation error",
-        errors: error.errors,
-      });
-    }
+//     // Handle Mongoose validation errors
+//     if (error instanceof mongoose.Error.ValidationError) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Validation error",
+//         errors: error.errors,
+//       });
+//     }
 
-    // Handle duplicate key errors (e.g., unique email)
-    if ( === 11000) {
-      return res.status(400).json({
-        success: false,
-        message: "Email already exists",
-      });
-    }
+//     // Handle duplicate key errors (e.g., unique email)
+//     if ( === 11000) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Email already exists",
+//       });
+//     }
 
-    // Generic server error
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-});
+//     // Generic server error
+//     return res.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// });
 
 // GET route to fetch all patients
-router.get("/", async (req: Request<any>, res: any) => {
+router.get("/", async (req , res ) => {
   try {
     const patients = await Paitent.find().populate("doctors logs"); // Populate related fields
     return res.status(200).json({
@@ -95,7 +97,7 @@ router.get("/", async (req: Request<any>, res: any) => {
 });
 
 // GET route to fetch a single patient by ID
-router.get("/:id", async (req: Request<any>, res: any) => {
+router.get("/:id", async (req , res ) => {
   try {
     const patient = await Paitent.findById(req.params.id).populate("doctors logs"); // Populate related fields
 
@@ -121,7 +123,7 @@ router.get("/:id", async (req: Request<any>, res: any) => {
 });
 
 // PUT route to update a patient by ID
-router.put("/:id", async (req: Request<any>, res: any) => {
+router.put("/:id", async (req , res ) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -172,7 +174,7 @@ router.put("/:id", async (req: Request<any>, res: any) => {
 });
 
 // DELETE route to delete a patient by ID
-router.delete("/:id", async (req: Request<any>, res: any) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -198,5 +200,36 @@ router.delete("/:id", async (req: Request<any>, res: any) => {
     });
   }
 });
+
+router.post("/aichat",verifyToken,async(req,res)=>{
+  const {patientId} = req.body
+  try{
+      const patientId = await req.user._id
+      const newChat = new AIChat({
+        patientId:patientId,
+        cache: randomUUID()
+      })
+      const savedChat = await newChat.save()
+      res.status(201).json({aiChatId:savedChat._id})
+  }catch(error){
+      console.log(error)
+      res.status(500).json({error:"Unexpected error occured"})
+  }
+})
+router.get("/aichat/:id",[verifyToken],async(req,res)=>{
+  const {patientId} = req.body
+  const {id} = req.params
+  try{
+      const patientId = await req.user._id
+      const chatHistory = await AIChat.findById(id)
+      chatHistory
+      const savedChat = await newChat.save()
+      res.status(201).json({aiChatId:savedChat._id})
+  }catch(error){
+      console.log(error)
+      res.status(500).json({error:"Unexpected error occured"})
+  }
+})
+
 
 export default router;

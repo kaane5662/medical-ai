@@ -50,7 +50,8 @@ const paitentSchema = new mongoose.Schema({
     username:{
         typr:String,
         required:true
-    }
+    },
+    
   });
 
   const Paitent = mongoose.models?.Paitent || mongoose.model("Paitent", paitentSchema)
