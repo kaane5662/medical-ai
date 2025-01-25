@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import Paitent from "../schemas/Patient";
 import mongoose from "mongoose";
-import {verifyToken} from "../jwtMiddleware";
+import { verifyToken } from "../jwtMiddleware"
 const router = express.Router();
 
 
@@ -16,6 +16,10 @@ router.post("/", (req: Request<any>, res: any) => {
       doctors,
       logs,
     } = req.body;
+});
+
+router.get("/", verifyToken, async(res , ))
+
 
 
     // Validate required fields
