@@ -24,7 +24,7 @@ consultationModes: [],
 availableHours: "",
 });
 
-const handleInputChange = (e) => {
+const handleInputChange = (e:any) => {
 const { name, value, type, checked } = e.target;
 setFormData({
     ...formData,
@@ -32,7 +32,7 @@ setFormData({
 });
 };
 
-const handleFileChange = (e) => {
+const handleFileChange = (e:any) => {
 const { name, files } = e.target;
 setFormData({
     ...formData,
@@ -40,7 +40,7 @@ setFormData({
 });
 };
 
-const handleSubmit = (e) => {
+const handleSubmit = (e:any) => {
 e.preventDefault();
 console.log("Form Data:", formData);
 // Add your submission logic here
@@ -325,11 +325,11 @@ return (
                 value="In-Person"
                 onChange={(e) => {
                 const { checked, value } = e.target;
-                setFormData((prev) => ({
+                setFormData((prev:any) => ({
                     ...prev,
                     consultationModes: checked
                     ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
+                    : prev.consultationModes.filter((mode:any) => mode !== value),
                 }));
                 }}
                 className="mr-2"
@@ -343,11 +343,11 @@ return (
                 value="Video Call"
                 onChange={(e) => {
                 const { checked, value } = e.target;
-                setFormData((prev) => ({
+                setFormData((prev:any) => ({
                     ...prev,
                     consultationModes: checked
                     ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
+                    : prev.consultationModes.filter((mode:any) => mode !== value),
                 }));
                 }}
                 className="mr-2"
@@ -361,11 +361,11 @@ return (
                 value="Phone Call"
                 onChange={(e) => {
                 const { checked, value } = e.target;
-                setFormData((prev) => ({
+                setFormData((prev:any) => ({
                     ...prev,
                     consultationModes: checked
                     ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
+                    : prev.consultationModes.filter((mode:any) => mode !== value),
                 }));
                 }}
                 className="mr-2"
