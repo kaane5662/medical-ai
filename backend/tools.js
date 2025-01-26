@@ -4,19 +4,19 @@ const misdiagnosisToolSchema = {
     input_schema: {
         type: "object",
         properties: {
-            disease: {
+            Disease: {
                 type: "string",
                 description: "The suspected disease or condition, e.g., 'Flu', 'COVID-19', 'Pneumonia'."
             },
-            fever: {
+            Fever: {
                 type: "boolean",
                 description: "Whether the patient has a fever (true/false)."
             },
-            cough: {
+            Cough: {
                 type: "boolean",
                 description: "Whether the patient has a cough (true/false)."
             },
-            fatigue: {
+            Fatigue: {
                 type: "boolean",
                 description: "Whether the patient is experiencing fatigue (true/false)."
             },
@@ -34,11 +34,11 @@ const misdiagnosisToolSchema = {
             },
             blood_pressure: {
                 type: "string",
-                description: "The patient's blood pressure, e.g., '120/80'."
+                description: "The patient's blood pressure, categorized e.g. Low, Normal, High"
             },
             cholesterol_level: {
-                type: "integer",
-                description: "The patient's cholesterol level in mg/dL."
+                type: "string",
+                description: "The patient's cholesterol level categorized e.g. Low, Normal, High"
             },
             outcome_variable: {
                 type: "string",

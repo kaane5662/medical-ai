@@ -571,7 +571,13 @@ router.post("/aichat",verifyToken,async(req,res)=>{
       if(!message.content) return {error:"No content"}
       const aiResponse = message.content[0].text
       if(message.stop_reason == "tool_use"){
-        const input = message.content[1].input
+        let input = message.content[1].input
+        input = {
+          ...input,
+          "Cholesterol Level": input.cholesterol_level,
+          "Blood Pressure":input.blood_pressure,
+
+        }
         const res = await fetch(`${process.env.AI_BACKEND}/predict`,{
           method:"POST", 
           headers: {
