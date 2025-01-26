@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
   
     try {
       // Create a new doctor if none exists
-      if(confirmpassword != password) return res.status(500).json({error:"Passwords do not match!"})
+    //   if(confirmpassword != password) return res.status(500).json({error:"Passwords do not match!"})
         if(password.length < 8) return res.status(500).json({error: "Password must be at least 8 characters!"})
         // if(email.split("@").length != 2 || email.split(".").length != 2) return res.status(500).json({error:"Must be a valid email!"})
         const hashedPassword = await bcryptjs.hash(password, 10)

@@ -8,7 +8,6 @@ import bcryptjs from "bcryptjs"
 import Anthropic from "@anthropic-ai/sdk";
 import Doctor from "../schemas/Doctor.js";
 import Log from "../schemas/Log.js";
-import { log } from "console";
 const anthropic = new Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
 
 const router = express.Router();
@@ -27,7 +26,7 @@ router.post("/", async(req, res ) => {
       password,
       confirmpassword
     } = req.body;
-    if(confirmpassword != password) return res.status(500).json({error:"Passwords do not match!"})
+    // if(confirmpassword != password) return res.status(500).json({error:"Passwords do not match!"})
     if(password.length < 8) return res.status(500).json({error: "Password must be at least 8 characters!"})
     // if(email.split("@").length != 2 || email.split(".").length != 2) return res.status(500).json({error:"Must be a valid email!"})
     const hashedPassword = await bcryptjs.hash(password, 10)
@@ -107,7 +106,8 @@ router.put("/", async(req, res ) => {
 router.get("/patient", verifyToken,async (req , res ) => {
   try {
     const patientId = req.user._id
-    const patients = await Patient.findById(patientId) // Populate related fields
+    const patients = await Patient.findById(patientId).populate("logs") // Populate related fields
+    
     return res.status(200).json(patients);
   } catch (error) {
     console.error("Error fetching patients:", error);
@@ -181,28 +181,6 @@ router.get("/:id", async (req , res ) => {
     });
   }
 });
-router.get("/logs", verifyToken,async (req , res ) => {
-  try {
-    console.log("hello from the world")
-    const patientId = req.user._id
-    console.log(patientId,"user thing")
-    const patient = await Patient.findById(patientId)
-    
-    if (!patient) {
-      return res.status(404).json({
-        success: false,
-        error: "Patient not found",
-      });
-    }
-    return res.status(200).json(patient.logs);
-  } catch (error) {
-    console.error("Error fetching patient:", error);
-    return res.status(500).json({
-      success: false,
-      error: "Internal server error",
-    });
-  }
-});
 
 router.post("/logs", verifyToken,async (req, res) => {
   try {
@@ -260,6 +238,31 @@ router.post("/logs", verifyToken,async (req, res) => {
     });
   }
 });
+router.get("/log", verifyToken,async (req , res ) => {
+  try {
+    console.log("hello from the world")
+    const patientId = req.user._id
+    console.log(patientId,"user thing")
+
+    // // const patient = await Patient.findById(patientId)
+    
+    // if (!patient) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     error: "Patient not found",
+    //   });
+    // }
+    // return res.status(200).json(patient.logs);
+    return res.send()
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+
 router.put("/logs/:id", async (req, res) => {
   try {
     const { id } = req.params;

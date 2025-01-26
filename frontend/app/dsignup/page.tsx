@@ -1,23 +1,24 @@
 "use client"; // Mark this component as a Client Component
 
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const DoctorSignUp = () => {
 const router = useRouter()
 const [formData, setFormData] = useState({
-fullName: "",
+firstName:"",
+lastName:"",
 dateofbirth: "",
 email: "",
 address: "",
-phonenumber: "",
+phoneNumber: "",
 gender: "",
 boardcertifications: "",
-malpracticeid: "",
-medicalLicense: "",
-specialization: "",
-hospital: "",
+malPracticeId: "",
+licenceNumber: "",
+specialty: "",
+hospitalName: "",
 proofOfIdentity: null,
 proofOfPractice: null,
 username: "",
@@ -29,27 +30,22 @@ availableHours: "",
 
 const handleInputChange = (e:any) => {
 const { name, value, type, checked } = e.target;
+console.log(value   )
 setFormData({
     ...formData,
     [name]: type === "checkbox" ? checked : value,
 });
 };
 
-const handleFileChange = (e:any) => {
-const { name, files } = e.target;
-setFormData({
-    ...formData,
-    [name]: files[0],
-});
-};
 
 const handleSubmit = (e:any) => {
 e.preventDefault();
 console.log("Form Data:", formData);
-axios.post(`${process.env.NEXT_PUBLIC_SERVER}/doctors`,formData,{withCredentials:true}).then((res)=>{
+
+axios.post(`${process.env.NEXT_PUBLIC_SERVER}/doctors/`,formData,{withCredentials:true}).then((res)=>{
     router.push("/dashboard");
 }).catch((error:any)=>{
-    
+    console.error(error)
 })
 // Add your submission logic here
 };
@@ -59,19 +55,36 @@ return (
     <div className="bg-[#1F7A9C] p-8 rounded-lg shadow-lg w-full max-w-lg">
     <h1 className="text-3xl font-bold text-[#FFFFFF] text-center mb-6">Doctor Sign Up</h1>
     <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
-            Full Name
-        </label>
-        <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
-            required
-        />
+        <div className="grid grid-cols-2 gap-2">
+
+            <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
+                First Name
+            </label>
+            <input
+                type="text"
+                id="fullName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
+                required
+            />
+            </div>
+            <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
+                Last Name
+            </label>
+            <input
+                type="text"
+                id="fullName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
+                required
+            />
+            </div>
         </div>
         <div>
         <label htmlFor="dateofbirth" className="block text-sm font-medium text-[#FFFFFF]">
@@ -116,55 +129,55 @@ return (
         />
         </div>
         <div>
-        <label htmlFor="phonenumber" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="phoneNumber" className="block text-sm font-medium text-[#FFFFFF]">
             Phone Number
         </label>
         <input
             type="text"
-            id="phonenumber"
-            name="phonenumber"
-            value={formData.phonenumber}
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         />
         </div>
         <div>
-        <label htmlFor="medicalLicense" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="licenceNumber" className="block text-sm font-medium text-[#FFFFFF]">
             Medical License Number
         </label>
         <input
             type="text"
-            id="medicalLicense"
-            name="medicalLicense"
-            value={formData.medicalLicense}
+        
+            name="licenceNumber"
+            value={formData.licenceNumber}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         />
         </div>
         <div>
-        <label htmlFor="malpracticeid" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="malPracticeId" className="block text-sm font-medium text-[#FFFFFF]">
             Malpractice ID
         </label>
         <input
             type="text"
-            id="malpracticeid"
-            name="malpracticeid"
-            value={formData.malpracticeid}
+            id="malPracticeId"
+            name="malPracticeId"
+            value={formData.malPracticeId}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         />
         </div>
         <div>
-        <label htmlFor="specialization" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="specialty" className="block text-sm font-medium text-[#FFFFFF]">
             Specialization
         </label>
         <select
             id="specialization"
-            name="specialization"
-            value={formData.specialization}
+            name="specialty"
+            value={formData.specialty}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
@@ -203,13 +216,13 @@ return (
         </select>
         </div>
         <div>
-        <label htmlFor="hospital" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="hospitalName" className="block text-sm font-medium text-[#FFFFFF]">
             Hospital/Clinic Name
         </label>
         <select
-            id="hospital"
-            name="hospital"
-            value={formData.hospital}
+            id="hospitalName"
+            name="hospitalName"
+            value={formData.hospitalName}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
@@ -268,7 +281,7 @@ return (
         </select>
         </div>
         <div>
-        <label htmlFor="proofOfIdentity" className="block text-sm font-medium text-[#FFFFFF]">
+        {/* <label htmlFor="proofOfIdentity" className="block text-sm font-medium text-[#FFFFFF]">
             Proof of Identity
         </label>
         <input
@@ -278,8 +291,8 @@ return (
             onChange={handleFileChange}
             className="mt-1 block w-full text-[#FFFFFF]"
             required
-        />
-        </div>
+        /> */}
+        {/* </div>
         <div>
         <label htmlFor="proofOfPractice" className="block text-sm font-medium text-[#FFFFFF]">
             Proof of Medical Practice
@@ -293,7 +306,7 @@ return (
             required
         />
         </div>
-        <div>
+        <div> */}
         <label htmlFor="username" className="block text-sm font-medium text-[#FFFFFF]">
             Username
         </label>

@@ -28,9 +28,9 @@ const password = formData.get("password") as string;
 console.log("Username:", username);
 console.log("Password:", password);
 axios.put(`${process.env.NEXT_PUBLIC_SERVER}/doctors`,{username,password},{withCredentials:true}).then((res)=>{
-    router.push("/dashboard");
+    router.push("/ddashboard");
 }).catch((error:any)=>{
-    
+    console.error(error)
 })
 // Example: Redirect to dashboard after login
 

@@ -2,82 +2,62 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import axios from "axios";
 import { Calendar, Clock, Stethoscope, Pill, Activity, MessageCircle, Plus, ClipboardList } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function PatientDashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [logEntries, setLogEntries] = useState<{ [key: string]: any }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentLog, setCurrentLog] = useState({
-    bloodGlucose: "",
+    glucose: "",
     bloodPressure: "",
     symptoms: "",
     medications: "",
     frequency: "",
-    notes: "",
+    description: "",
   });
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
   };
 
+  const fetchDashboard = ()=>{
+    axios.get("/patient",{withCredentials:true}).then((res)=>{
+      setCurrentLog(res.data.tags[0])
+    }).catch((error)=>{
+      console.log(error)
+    })
+  }
+
+  useEffect(()=>{
+    fetchDashboard()
+  },[])
+
   const handleLogSubmit = async () => {
-    if (selectedDate) {
-      const dateKey = selectedDate.toISOString().split("T")[0];
-
-      // Prepare the log data
-      const logData = {
-        symptoms: currentLog.symptoms.split(",").map((s) => s.trim()), // Convert symptoms string to array
-        glucose: parseFloat(currentLog.bloodGlucose), // Convert to number
-        bloodPressure: parseFloat(currentLog.bloodPressure), // Convert to number
-        medications: currentLog.medications.split(",").map((m) => m.trim()), // Convert medications string to array
-        frequency: currentLog.frequency,
-        timestamp: selectedDate,
-        description: currentLog.notes,
-        patient: "PATIENT_ID", // Replace with the actual patient ID (e.g., from session or context)
-        doctor: "DOCTOR_ID", // Replace with the actual doctor ID (e.g., from session or context)
-      };
-
-      try {
-        // Send the log data to the backend using fetch
-        const response = await fetch("/api/logs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(logData),
-        });
-
-        if (response.ok) {
-          // Update the local state with the new log entry
-          setLogEntries((prev) => ({
-            ...prev,
-            [dateKey]: { ...currentLog },
-          }));
-
-          // Close the modal and reset the form
-          setIsModalOpen(false);
-          setCurrentLog({
-            bloodGlucose: "",
-            bloodPressure: "",
-            symptoms: "",
-            medications: "",
-            frequency: "",
-            notes: "",
-          });
-
-          alert("Log saved successfully!");
-        } else {
-          throw new Error("Failed to save log.");
+    if (selectedDate == null) return
+    const dateKey = selectedDate.toISOString().split("T")[0];
+    axios.post(`${process.env.NEXT_PUBLIC_SERVER}/patients/logs`,currentLog,{withCredentials:true}).then((res)=>{
+      console.log("Good boy")
+      setSelectedDate(null)
+      setCurrentLog(
+        {
+          glucose: "",
+          bloodPressure: "",
+          symptoms: "",
+          medications: "",
+          frequency: "",
+          description: "",
         }
-      } catch (error) {
-        console.error("Error saving log:", error);
-        alert("Failed to save log. Please try again.");
-      }
-    }
+      )
+    }).catch((error:any)=>{
+        console.error(error)
+    })
+
+      
   };
 
   // Example doctor notes data
@@ -325,8 +305,8 @@ export default function PatientDashboard() {
               <input
                 type="text"
                 placeholder="Blood Glucose (e.g., 120 mg/dL)"
-                value={currentLog.bloodGlucose}
-                onChange={(e) => setCurrentLog({ ...currentLog, bloodGlucose: e.target.value })}
+                value={currentLog.glucose}
+                onChange={(e) => setCurrentLog({ ...currentLog, glucose: e.target.value })}
                 className="w-full p-2 border rounded"
               />
               <input
@@ -360,8 +340,8 @@ export default function PatientDashboard() {
               <input
                 type="text"
                 placeholder="Any Additional Notes"
-                value={currentLog.frequency}
-                onChange={(e) => setCurrentLog({ ...currentLog, notes: e.target.value })}
+                value={currentLog.description}
+                onChange={(e) => setCurrentLog({ ...currentLog, description: e.target.value })}
                 className="w-full p-2 border rounded"
               />
             </div>

@@ -19,6 +19,7 @@ export default function DoctorDashboard() {
     { id: 2, patientName: "Jane Smith", time: "2:30 PM", purpose: "Consultation" },
   ];
 
+
   return (
     <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
       {/* Navbar */}
@@ -146,7 +147,7 @@ export default function DoctorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <p><strong>Average Heart Rate:</strong> 72 BPM</p>
+                <p><strong>Average Heart Rate:</strong> {}</p>
                 <p><strong>Average Blood Pressure:</strong> 120/80 mmHg</p>
                 <p><strong>Most Common Condition:</strong> Hypertension</p>
               </div>

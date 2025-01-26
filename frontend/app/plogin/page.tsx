@@ -1,5 +1,6 @@
 "use client"; // Mark this component as a Client Component
 
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -28,7 +29,11 @@ console.log("Username:", username);
 console.log("Password:", password);
 
 // Example: Redirect to dashboard after login
-router.push("/dashboard");
+axios.put(`${process.env.NEXT_PUBLIC_SERVER}/patients`,{username,password},{withCredentials:true}).then((res)=>{
+    router.push("/pdashboard");
+}).catch((error:any)=>{
+    console.error(error)
+})
 };
 
 // Prevent rendering on the server

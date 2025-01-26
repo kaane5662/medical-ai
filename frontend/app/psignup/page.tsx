@@ -1,34 +1,40 @@
 "use client"; // Mark this component as a Client Component
 
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const DoctorSignUp = () => {
+const router = useRouter()
 const [formData, setFormData] = useState({
-fullName: "",
+firstName: "",
+lastName: "",
 dateofbirth: "",
 email: "",
 address: "",
-phonenumber: "",
-insurancetf: "",
-insuranceprovider: "",
-insurancenumber: "",
+phoneNumber: "",
+hasInsurance: "",
+insuranceProvider: "",
+insuranceNumber: "",
 gender: "",
 proofOfIdentity: null,
 username: "",
 password: "",
-termsAccepted: false,
+tosAccepted: false,
 });
 
-const handleInputChange = (e) => {
+const handleInputChange = (e:any) => {
 const { name, value, type, checked } = e.target;
+console.log(value)
 setFormData({
     ...formData,
     [name]: type === "checkbox" ? checked : value,
 });
 };
 
-const handleFileChange = (e) => {
+const handleFileChange = (e:any) => {
 const { name, files } = e.target;
+
 setFormData({
     ...formData,
     [name]: files[0],
@@ -38,6 +44,11 @@ setFormData({
 const handleSubmit = (e) => {
 e.preventDefault();
 console.log("Form Data:", formData);
+axios.post(`${process.env.NEXT_PUBLIC_SERVER}/patients`,formData,{withCredentials:true}).then((res)=>{
+    router.push("/pdashboard");
+}).catch((error:any)=>{
+    console.error(error)
+})
 // Add your submission logic here
 };
 
@@ -46,20 +57,34 @@ return (
     <div className="bg-[#1F7A9C] p-8 rounded-lg shadow-lg w-full max-w-lg">
     <h1 className="text-3xl font-bold text-[#FFFFFF] text-center mb-6">Doctor Sign Up</h1>
     <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
-            Full Name
-        </label>
-        <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
-            required
-        />
-        </div>
+    <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
+                First Name
+            </label>
+            <input
+                type="text"
+                id="fullName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
+                required
+            />
+            </div>
+            <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-[#FFFFFF]">
+                Last Name
+            </label>
+            <input
+                type="text"
+                id="fullName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
+                required
+            />
+            </div>
         <div>
         <label htmlFor="dateofbirth" className="block text-sm font-medium text-[#FFFFFF]">
             Date of Birth
@@ -108,28 +133,28 @@ return (
         </label>
         <input
             type="text"
-            id="phonenumber"
-            name="phonenumber"
-            value={formData.phonenumber}
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         />
         </div>
         <div>
-        <label htmlFor="insurancetf" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="hasInsurance" className="block text-sm font-medium text-[#FFFFFF]">
             Do you have insurance
         </label>
         <select
-            id="insurancetf"
-            name="insurancetf"
-            value={formData.insurancetf}
+            id="hasInsurance"
+            name="hasInsurance"
+            value={formData.hasInsurance}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         >
-            <option value="">Yes</option>
-            <option value="">No</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
         </select>
         </div>
         <div>
@@ -138,8 +163,8 @@ return (
         </label>
         <select
             id="insuranceprovider"
-            name="insuranceprovider"
-            value={formData.insuranceprovider}
+            name="insuranceProvider"
+            value={formData.insuranceProvider}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
@@ -173,33 +198,33 @@ return (
         </div>
         
         <div>
-        <label htmlFor="insurancenumber" className="block text-sm font-medium text-[#FFFFFF]">
+        <label htmlFor="insuranceNumber" className="block text-sm font-medium text-[#FFFFFF]">
             Insurance Number
         </label>
         <input
             type="text"
-            id="insurancenumber"
-            name="insurancenumber"
-            value={formData.insurancenumber}
+            id="insuranceNumber"
+            name="insuranceNumber"
+            value={formData.insuranceNumber}
             onChange={handleInputChange}
             className="mt-1 block w-full px-3 py-2 bg-[#FFFFFF] border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#BF0F7] focus:border-[#BF0F7]"
             required
         />
         </div>
         <div></div>
-        <div>
-        <label htmlFor="proofOfIdentity" className="block text-sm font-medium text-[#FFFFFF]">
-            Proof of Identity
-        </label>
-        <input
-            type="file"
-            id="proofOfIdentity"
-            name="proofOfIdentity"
-            onChange={handleFileChange}
-            className="mt-1 block w-full text-[#FFFFFF]"
-            required
-        />
-        </div>
+            {/* <div>
+            <label htmlFor="proofOfIdentity" className="block text-sm font-medium text-[#FFFFFF]">
+                Proof of Identity
+            </label>
+            <input
+                type="file"
+                id="proofOfIdentity"
+                name="proofOfIdentity"
+                onChange={handleFileChange}
+                className="mt-1 block w-full text-[#FFFFFF]"
+                required
+            />
+            </div> */}
         <div>
         <label htmlFor="username" className="block text-sm font-medium text-[#FFFFFF]">
             Username
@@ -232,69 +257,14 @@ return (
         <label className="block text-sm font-medium text-[#FFFFFF]">
             Preferred Consultation Mode
         </label>
-        <div className="flex items-center space-x-4">
-            <label className="flex items-center text-[#FFFFFF]">
-            <input
-                type="checkbox"
-                name="consultationModes"
-                value="In-Person"
-                onChange={(e) => {
-                const { checked, value } = e.target;
-                setFormData((prev) => ({
-                    ...prev,
-                    consultationModes: checked
-                    ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
-                }));
-                }}
-                className="mr-2"
-            />
-            In-Person
-            </label>
-            <label className="flex items-center text-[#FFFFFF]">
-            <input
-                type="checkbox"
-                name="consultationModes"
-                value="Video Call"
-                onChange={(e) => {
-                const { checked, value } = e.target;
-                setFormData((prev) => ({
-                    ...prev,
-                    consultationModes: checked
-                    ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
-                }));
-                }}
-                className="mr-2"
-            />
-            Video Call
-            </label>
-            <label className="flex items-center text-[#FFFFFF]">
-            <input
-                type="checkbox"
-                name="consultationModes"
-                value="Phone Call"
-                onChange={(e) => {
-                const { checked, value } = e.target;
-                setFormData((prev) => ({
-                    ...prev,
-                    consultationModes: checked
-                    ? [...prev.consultationModes, value]
-                    : prev.consultationModes.filter((mode) => mode !== value),
-                }));
-                }}
-                className="mr-2"
-            />
-            Phone Call
-            </label>
-        </div>
+        
         </div>
         <div className="flex items-center">
         <input
             type="checkbox"
-            id="termsAccepted"
-            name="termsAccepted"
-            checked={formData.termsAccepted}
+            id="tosAccepted"
+            name="tosAccepted"
+            checked={formData.tosAccepted}
             onChange={handleInputChange}
             className="mr-2"
             required
