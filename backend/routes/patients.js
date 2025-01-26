@@ -105,11 +105,7 @@ router.put("/", async(req, res ) => {
 router.get("/", async (req , res ) => {
   try {
     const patients = await Patient.find() // Populate related fields
-    return res.status(200).json({
-      success: true,
-      message: "Patients fetched successfully",
-      data: patients,
-    });
+    return res.status(200).json(patients);
   } catch (error) {
     console.error("Error fetching patients:", error);
     return res.status(500).json({
