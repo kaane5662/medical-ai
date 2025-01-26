@@ -1,8 +1,11 @@
 "use client"; // Mark this component as a Client Component
 
+import axios from "axios";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const DoctorSignUp = () => {
+const router = useRouter()
 const [formData, setFormData] = useState({
 fullName: "",
 dateofbirth: "",
@@ -40,9 +43,14 @@ setFormData({
 });
 };
 
-const handleSubmit = (e) => {
+const handleSubmit = (e:any) => {
 e.preventDefault();
 console.log("Form Data:", formData);
+axios.post(`${process.env.NEXT_PUBLIC_SERVER}/doctors`,formData,{withCredentials:true}).then((res)=>{
+    router.push("/dashboard");
+}).catch((error:any)=>{
+    
+})
 // Add your submission logic here
 };
 

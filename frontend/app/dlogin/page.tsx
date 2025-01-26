@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const LoginPage = () => {
 const router = useRouter();
@@ -26,9 +27,13 @@ const password = formData.get("password") as string;
 // Log the form data (replace this with your login logic)
 console.log("Username:", username);
 console.log("Password:", password);
-
+axios.put(`${process.env.NEXT_PUBLIC_SERVER}/doctors`,{username,password},{withCredentials:true}).then((res)=>{
+    router.push("/dashboard");
+}).catch((error:any)=>{
+    
+})
 // Example: Redirect to dashboard after login
-router.push("/dashboard");
+
 };
 
 // Prevent rendering on the server
