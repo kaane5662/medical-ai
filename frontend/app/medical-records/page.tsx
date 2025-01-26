@@ -27,9 +27,7 @@ export default function MedicalRecords() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/patients/logs`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          credentials:"include"
         });
 
         if (!response.ok) {
@@ -37,6 +35,7 @@ export default function MedicalRecords() {
         }
 
         const data = await response.json();
+        console.log(data)
         setMedicalRecords(data);
       } catch (err) {
         console.error("Error fetching medical records:", err);

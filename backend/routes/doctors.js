@@ -138,6 +138,21 @@ router.get("/patients",verifyToken,async(req,res)=>{
         res.status(500).json({error:"Unexpected error occured"})
     }
 })
+router.post("/patients",verifyToken,async(req,res)=>{
+    const {page, resultsPerPage, firstName, lastName, paitentId} = req.body
+    try{
+        console.log("user",req.user)
+        const doctorId = await req.user._id
+        
+        const paitents = await Log.find({doctor:doctorId})
+        if(paitents == null) res.status(404).json({error:"Not found"})
+        res.status(200).json(paitents)
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error:"Unexpected error occured"})
+    }
+})
+
 
 router.get("/patients/logs",verifyToken,async(req,res)=>{
     const {patientId} = req.body

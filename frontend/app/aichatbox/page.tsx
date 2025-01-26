@@ -13,7 +13,7 @@ interface Message {
 const ChatPage = () => {
 const router = useRouter(); // Initialize the router
 const [Messages,setMessages] = useState<Message[]>([])
-const [text,setText] = useState() 
+const [text,setText] = useState('') 
 
 const fetchChat  =()=>{
     axios.get(`${process.env.NEXT_PUBLIC_SERVER}/patients/aichat`,{withCredentials:true}).then((res)=>{
@@ -24,9 +24,11 @@ const fetchChat  =()=>{
 }
 const createMessage  =(e:any)=>{
     e.preventDefault()
+    if(text.length < 1) return
+    setMessages([...Messages,{text:text,role:"user"}])
     axios.post(`${process.env.NEXT_PUBLIC_SERVER}/patients/aichat/`,{text},{withCredentials:true}).then((res)=>{
         const data = res.data
-        setMessages([...Messages,data.userBubble,data.aiBubble])
+        setMessages(prev=>[...Messages,data.aiBubble])
     }).catch((error:any)=>{
         console.error(error)
     })

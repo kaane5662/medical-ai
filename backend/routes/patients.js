@@ -8,6 +8,7 @@ import bcryptjs from "bcryptjs"
 import Anthropic from "@anthropic-ai/sdk";
 import Doctor from "../schemas/Doctor.js";
 import Log from "../schemas/Log.js";
+import { misdiagnosisToolSchema } from "../tools.js";
 const anthropic = new Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
 
 const router = express.Router();
@@ -156,6 +157,21 @@ router.get("/patient", verifyToken,async (req , res ) => {
     });
   }
 });
+router.get("/doctors", verifyToken,async (req , res ) => {
+  try {
+    const patientId = req.user._id
+    const doctors = await Doctor.find({patient:patientId}) // Populate related fields
+    if(doctors == null) return res.status(404)
+    return res.status(200).json(doctors);
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 
   
 router.post("/doctors", verifyToken ,async(req,res)=>{
@@ -339,66 +355,7 @@ router.put("/logs/:id", async (req, res) => {
   }
 });
 
-router.post("/doctor", verifyToken,async (req, res) => {
-  try {
-    const { doctorId } = req.body;
 
-    // Validate input
-    if (!patientId || !doctorId) {
-      return res.status(400).json({
-        success: false,
-        error: "Patient ID and Doctor ID are required",
-      });
-    }
-
-    // Find the patient and doctor
-    const patient = req.user._id
-    const doctor = await Doctor.findById(doctorId);
-
-    if (!patient) {
-      return res.status(404).json({
-        success: false,
-        error: "Patient not found",
-      });
-    }
-
-    if (!doctor) {
-      return res.status(404).json({
-        success: false,
-        error: "Doctor not found",
-      });
-    }
-
-    // Check if the doctor is already assigned to the patient
-    if (patient.doctors.includes(doctorId)) {
-      return res.status(400).json({
-        success: false,
-        error: "Doctor already assigned to this patient",
-      });
-    }
-
-    // Add doctor to patient's doctors array
-    patient.doctors.push(doctorId);
-    await patient.save();
-
-    // Add patient to doctor's patients array
-    doctor.patients.push(patientId);
-    await doctor.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Doctor added to patient successfully",
-      patient,
-      doctor,
-    });
-  } catch (error) {
-    console.error("Error adding doctor:", error);
-    return res.status(500).json({
-      success: false,
-      error: "Internal server error",
-    });
-  }
-});
 router.get("/doctors/:id", verifyToken,async (req, res) => {
   try {
     const { id } = req.params;
@@ -581,7 +538,7 @@ router.post("/aichat",verifyToken,async(req,res)=>{
         model: "claude-3-5-sonnet-20241022",
         max_tokens: 1024,
         temperature:0,
-         system: "Act as an AI Patient Care Provider Assistant designed to support healthcare professionals and patients who provides professional advice",
+         system: "Act as an AI Patient Care Provider Assistant designed to support healthcare professionals and patients who provides professional advice. If a user feels misdiagnosed run the misdiagnosis tool schema",
         messages: [
             {
                 "role": "user", 
@@ -600,15 +557,33 @@ router.post("/aichat",verifyToken,async(req,res)=>{
                 Administrative Support: Assist with documentation, insurance queries, and referrals to specialists or resources.
 
                 Always prioritize patient privacy and adhere to HIPAA or relevant data protection regulations. If a situation requires urgent or specialized attention, escalate it to a human healthcare provider immediately.
-
+              
+                Here is what the user asks: ${text}
                 
                 `.trim(),
                 
             },
-        ]
+            
+        ],
+        tools: [misdiagnosisToolSchema]
       });
+      console.log(message)
       if(!message.content) return {error:"No content"}
       const aiResponse = message.content[0].text
+      if(message.stop_reason == "tool_use"){
+        const input = message.content[1].input
+        const res = await fetch(`${process.env.AI_BACKEND}/predict`,{
+          method:"POST", 
+          headers: {
+            "Content-Type": "application/json" // Specify the content type as JSON
+          },
+          body: JSON.stringify(input)
+            
+        })
+        const data = await res.json()
+        console.log(data)
+      }
+      
       const userBubble = await AIMessage.create({
         text,
         aiChat: id,
