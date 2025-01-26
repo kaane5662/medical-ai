@@ -6,19 +6,58 @@ import { Activity, Calendar, ClipboardList, MessageCircle, Stethoscope, User } f
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function DoctorDashboard() {
-  // Example data for patients and appointments
-  const patients = [
-    { id: 1, name: "John Doe", lastVisit: "2023-10-01", condition: "Hypertension" },
-    { id: 2, name: "Jane Smith", lastVisit: "2023-10-05", condition: "Diabetes" },
-  ];
+  // Define interfaces for Patient and Appointments
+  interface Patient {
+    id: number;
+    firstName: string;
+    lastName: string;
+    insuranceNumber: string;
+    condition?: string; // Optional field
+  }
 
-  const appointments = [
-    { id: 1, patientName: "John Doe", time: "10:00 AM", purpose: "Follow-up" },
-    { id: 2, patientName: "Jane Smith", time: "2:30 PM", purpose: "Consultation" },
-  ];
+  interface Appointments {
+    appointmentID: string;
+    patientName: string;
+    reason: string;
+    appointmentTimeStamp: Date;
+  }
 
+  // State variables
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<Appointments[]>([]);
+
+  // Fetch patients data
+  const fetchPatients = () => {
+    axios
+      .get("/api/patients", { withCredentials: true })
+      .then((res) => {
+        setPatients(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching patients:", error);
+      });
+  };
+
+  // Fetch appointments data
+  const fetchAppointments = () => {
+    axios
+      .get("/api/appointments", { withCredentials: true })
+      .then((res) => {
+        setAppointments(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching appointments:", error);
+      });
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchPatients();
+    fetchAppointments();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
@@ -58,12 +97,18 @@ export default function DoctorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {appointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between">
-                    <p className="font-medium">{appointment.patientName}</p>
-                    <p className="text-sm text-[#1F7A8C]">{appointment.time}</p>
-                  </div>
-                ))}
+                {appointments.length === 0 ? (
+                  <p>No appointments found.</p>
+                ) : (
+                  appointments.map((appointment) => (
+                    <div key={appointment.appointmentID} className="flex items-center justify-between">
+                      <p className="font-medium">{appointment.patientName}</p>
+                      <p className="text-sm text-[#1F7A8C]">
+                        {new Date(appointment.appointmentTimeStamp).toLocaleString()}
+                      </p>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -79,12 +124,16 @@ export default function DoctorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {patients.map((patient) => (
-                  <div key={patient.id} className="flex items-center justify-between">
-                    <p className="font-medium">{patient.name}</p>
-                    <p className="text-sm text-[#1F7A8C]">{patient.condition}</p>
-                  </div>
-                ))}
+                {patients.length === 0 ? (
+                  <p>No patients found.</p>
+                ) : (
+                  patients.map((patient) => (
+                    <div key={patient.id} className="flex items-center justify-between">
+                      <p className="font-medium">{`${patient.firstName} ${patient.lastName}`}</p>
+                      <p className="text-sm text-[#1F7A8C]">{patient.insuranceNumber}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -111,30 +160,28 @@ export default function DoctorDashboard() {
           </Card>
 
           {/* Quick Actions Card */}
-          {/* Quick Actions Card */}
-            <Card className="bg-[#FFFFFF] shadow-lg">
+          <Card className="bg-[#FFFFFF] shadow-lg">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 <Stethoscope className="text-[#1F7A8C]" />
                 Quick Actions
-                </CardTitle>
-                <CardDescription>Quickly access important features.</CardDescription>
+              </CardTitle>
+              <CardDescription>Quickly access important features.</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+              <div className="space-y-4">
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                    <Link href="https://calendly.com/swftt-inc/doctor-appointment">Book Appointment</Link>
+                  <Link href="https://calendly.com/swftt-inc/doctor-appointment">Book Appointment</Link>
                 </Button>
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                    <Link href="/request-refill">Request Medication Refill</Link>
+                  <Link href="/request-refill">Request Medication Refill</Link>
                 </Button>
-                {/* Add the new "View Medical History" button */}
                 <Button className="w-full bg-[#BFDBF7] text-[#022B3A] hover:bg-[#A0C4E2]">
-                    <Link href="/medical-records">View Medical History</Link>
+                  <Link href="/medical-records">View Medical History</Link>
                 </Button>
-                </div>
+              </div>
             </CardContent>
-        </Card>
+          </Card>
 
           {/* Health Metrics Overview Card */}
           <Card className="bg-[#FFFFFF] shadow-lg">
@@ -147,7 +194,7 @@ export default function DoctorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <p><strong>Average Heart Rate:</strong> {}</p>
+                <p><strong>Average Heart Rate:</strong> 72 bpm</p>
                 <p><strong>Average Blood Pressure:</strong> 120/80 mmHg</p>
                 <p><strong>Most Common Condition:</strong> Hypertension</p>
               </div>
