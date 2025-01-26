@@ -7,6 +7,7 @@ import { verifyToken, generateToken } from "../jwtMiddleware.js";
 import bcryptjs from "bcryptjs"
 import Anthropic from "@anthropic-ai/sdk";
 import Doctor from "../schemas/Doctor.js";
+import Log from "../schemas/Log.js";
 const anthropic = new Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
 
 const router = express.Router();
@@ -115,7 +116,7 @@ router.get("/", async (req , res ) => {
   }
 });
 
-
+  
 router.post("/doctors", verifyToken ,async(req,res)=>{
   const {firstName, lastName, specialty, hospitalName} =  req.body
 
@@ -157,6 +158,31 @@ router.post("/doctors", verifyToken ,async(req,res)=>{
 router.get("/:id", async (req , res ) => {
   try {
     const patient = await Patient.findById(req.params.id).populate("doctors logs"); // Populate related fields
+    
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Patient fetched successfully",
+      data: patient,
+    });
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+router.get("/logs", async (req , res ) => {
+  try {
+    const patientId = req.user._id
+    const logs = await Log.find({patient:patientId})
     
     if (!patient) {
       return res.status(404).json({
