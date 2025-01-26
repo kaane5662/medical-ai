@@ -64,7 +64,7 @@ const PatientChatPage = () => {
 
   // Initialize WebSocket connection
   useEffect(() => {
-    const ws = new WebSocket("ws://http://localhost:5000"); // Replace with your WebSocket server URL
+    const ws = new WebSocket("http://localhost:5000"); // Replace with your WebSocket server URL
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
