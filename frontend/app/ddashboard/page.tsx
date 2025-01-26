@@ -9,46 +9,16 @@ import { useEffect, useState } from "react";
 
 export default function DoctorDashboard() {
   // Example data for patients and appointments
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  // const patients = [
-  //   { id: 1, name: "John Doe", lastVisit: "2023-10-01", condition: "Hypertension" },
-  //   { id: 2, name: "Jane Smith", lastVisit: "2023-10-05", condition: "Diabetes" },
-  // ];
+  const patients = [
+    { id: 1, name: "John Doe", lastVisit: "2023-10-01", condition: "Hypertension" },
+    { id: 2, name: "Jane Smith", lastVisit: "2023-10-05", condition: "Diabetes" },
+  ];
 
   const appointments = [
     { id: 1, patientName: "John Doe", time: "10:00 AM", purpose: "Follow-up" },
     { id: 2, patientName: "Jane Smith", time: "2:30 PM", purpose: "Consultation" },
   ];
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/patients`); // Adjust the API route if needed
-        if (!response.ok) {
-          throw new Error("Failed to fetch patients");
-        }
-        const data = await response.json();
-        setPatients(data.data); // Assuming the response has a `data` field
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPatients();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-  
   return (
     <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
       {/* Navbar */}
@@ -109,9 +79,9 @@ export default function DoctorDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {patients.map((patient) => (
-                  <div key={patient._id} className="flex items-center justify-between">
-                    <p className="font-medium">{patient.firstName} {patient.lastName}</p>
-                    <p className="text-sm text-[#1F7A8C]">{patient.condition || "No condition specified"}</p>
+                  <div key={patient.id} className="flex items-center justify-between">
+                    <p className="font-medium">{patient.name}</p>
+                    <p className="text-sm text-[#1F7A8C]">{patient.condition}</p>
                   </div>
                 ))}
               </div>
@@ -139,6 +109,7 @@ export default function DoctorDashboard() {
             </CardContent>
           </Card>
 
+          {/* Quick Actions Card */}
           {/* Quick Actions Card */}
             <Card className="bg-[#FFFFFF] shadow-lg">
             <CardHeader>
