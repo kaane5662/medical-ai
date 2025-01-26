@@ -18,15 +18,10 @@ export default function DoctorDashboard() {
 
   interface Patient {
     id: number;
-    name: string;
-    lastVisit: string;
-    condition: string;
-  }
-  interface Appointment {
-    id: number;
-    patientName: string;
-    time: string;
-    purpose: string;
+    firstName: string;
+    lastName: String;
+    insuranceNumber: string;
+    logs: 
   }
 
   const appointments = [
@@ -38,14 +33,13 @@ export default function DoctorDashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      const response = await axios.get("/patients", {withCredentials:true})
-      setPatients(response.data)
-    };
-
-    fetchPatients();
-  }, []);
+  const fetchDashboard = ()=>{
+    axios.get("/patients",{withCredentials:true}).then((res)=>{
+      setPatients(res.data)
+    }).catch((error)=>{
+      console.log(error)
+    })
+  }
 
   return (
     <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
@@ -108,7 +102,7 @@ export default function DoctorDashboard() {
               <div className="space-y-4">
                 {patients.map((patient) => (
                   <div key={patient.id} className="flex items-center justify-between">
-                    <p className="font-medium">{patient.name}</p>
+                    <p className="font-medium">{patient.lastName}</p>
                     <p className="text-sm text-[#1F7A8C]">{patient.condition}</p>
                   </div>
                 ))}
