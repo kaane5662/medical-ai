@@ -1,9 +1,30 @@
 'use client'; // Mark this as a Client Component
 
+import axios from 'axios';
 import { useRouter } from 'next/navigation'; // Import useRouter
-
+import { useEffect, useState } from 'react';
+interface Message {
+    role: string; // Role associated with the log
+    text: string; // The main text content of the log
+    // patient?: string; // ObjectId of the referenced Patient, optional on the frontend
+    // aiChat?: string; // ObjectId of the referenced AIChat, optional on the frontend
+    // cache?: string; // Cache information, optional field
+}
 const ChatPage = () => {
 const router = useRouter(); // Initialize the router
+const [Messages,setMessages] = useState<Message[]>([]) 
+
+const fetchChat  =()=>{
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER}/aichat`,{withCredentials:true}).then((res)=>{
+        setMessages(res.data)
+    }).catch((error:any)=>{
+        console.error(error)
+    })
+}
+
+useEffect(()=>{
+    fetchChat()
+})
 
 return (
 <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
@@ -37,10 +58,15 @@ return (
         <div className="overflow-y-auto h-96 mb-4">
         <div className="text-sm text-gray-700">
             {/* Example Chat Messages */}
-            <div className="mb-4">
-            <p className="font-semibold">User 1:</p>
-            <p>Hello! How can I help you today?</p>
-            </div>
+            {Messages.map((message,index)=>{
+                return(
+                    <div className="mb-4">
+                    <p className={`font-semibold ${message.role == "user" && "p-2 font-semibold"}`}>{message.role}</p>
+                    <p>{message.text}</p>
+                    </div>
+                )
+            })}
+            
             <div className="mb-4">
             <p className="font-semibold">User 2:</p>
             <p>Hi! I have a question about my order.</p>
@@ -50,6 +76,9 @@ return (
 
         {/* Chat Input */}
         <div className="flex gap-2">
+        <form>
+            
+        </form>
         <input
             type="text"
             placeholder="Type a message..."

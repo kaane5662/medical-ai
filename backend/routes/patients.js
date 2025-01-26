@@ -612,7 +612,7 @@ router.put("/aichat/:id",[verifyToken],async(req,res)=>{
         aiChat: id,
         role:"user"
       })
-      await AIChat.create({
+      await AIMessage.create({
         text:aiResponse,
         role:"ai",
         aiChat:id
