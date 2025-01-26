@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import { verifyToken } from "../jwtMiddleware.js"
+import { verifyToken,generateToken } from "../jwtMiddleware.js"
 import Doctor from "../schemas/Doctor.js"
 import Log from "../schemas/Log.js"
 import Patient from "../schemas/Patient.js"
@@ -87,6 +87,7 @@ router.put("/", async (req, res) => {
         return res.status(200).json("Cookies set")
    
     } catch (error) {
+        console.log(error)
         if (error.name === 'ValidationError') {
             // Handle Mongoose validation errors
             const errors = Object.values(error.errors).map(err => ({
@@ -138,24 +139,12 @@ router.get("/patients",verifyToken,async(req,res)=>{
     }
 })
 
-router.get("/patients",verifyToken,async(req,res)=>{
-    const {page, resultsPerPage, firstName, lastName, paitentId} = req.body
-    try{
-        const doctorId = await req.user._id
-        const paitents = await Log.find({doctor:doctorId})
-        if(paitents == null) res.status(404).json({error:"Not found"})
-        res.status(200).json(paitents)
-    }catch(error){
-        console.log(error)
-        res.status(500).json({error:"Unexpected error occured"})
-    }
-})
 router.get("/patients/logs",verifyToken,async(req,res)=>{
     const {patientId} = req.body
     try{
         console.log("user",req.user)
         const doctorId = await req.user._id
-        const logs = await Log.find({doctor:doctorId, paitent:patientId})
+        const logs = await Log.find({patient:patientId})
         if(logs == null) res.status(404).json({error:"Not found"})
         res.status(200).json(logs)
     }catch(error){

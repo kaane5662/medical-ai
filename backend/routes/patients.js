@@ -8,6 +8,7 @@ import bcryptjs from "bcryptjs"
 import Anthropic from "@anthropic-ai/sdk";
 import Doctor from "../schemas/Doctor.js";
 import Log from "../schemas/Log.js";
+import { log } from "console";
 const anthropic = new Anthropic({apiKey:process.env.ANTHROPIC_API_KEY})
 
 const router = express.Router();
@@ -102,10 +103,11 @@ router.put("/", async(req, res ) => {
 
 });
 
-// GET route to fetch all patients
-router.get("/", async (req , res ) => {
+// GET route to fetch patient
+router.get("/patient", verifyToken,async (req , res ) => {
   try {
-    const patients = await Patient.find() // Populate related fields
+    const patientId = req.user._id
+    const patients = await Patient.findById(patientId) // Populate related fields
     return res.status(200).json(patients);
   } catch (error) {
     console.error("Error fetching patients:", error);
@@ -179,11 +181,212 @@ router.get("/:id", async (req , res ) => {
     });
   }
 });
-router.get("/logs", async (req , res ) => {
+router.get("/logs", verifyToken,async (req , res ) => {
   try {
+    console.log("hello from the world")
     const patientId = req.user._id
-    const logs = await Log.find({patient:patientId})
+    console.log(patientId,"user thing")
+    const patient = await Patient.findById(patientId)
     
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        error: "Patient not found",
+      });
+    }
+    return res.status(200).json(patient.logs);
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+
+router.post("/logs", verifyToken,async (req, res) => {
+  try {
+    const {
+      symptoms,
+      glucose,
+      bloodPressure,
+      medications,
+      frequency,
+      timestamp,
+      diagnosis,
+      description,
+      // patientId,
+      doctorId,
+    } = req.body;
+
+    // Validate patient exists
+    const patientId = req.user._id
+    console.log("user",patientId)
+    if (!patientId) {
+      return res.status(404).json({
+        success: false,
+        error: "Patient not found",
+      });
+    }
+
+    // Create a new log
+    const newLog = new Log({
+      symptoms,
+      glucose,
+      bloodPressure,
+      medications,
+      frequency,
+      timestamp: timestamp || new Date(),
+      diagnosis,
+      description,
+      patient: patientId
+      // patient: patientId,
+      // doctor: doctorId,
+    });
+
+    // Save the log to the database
+    await newLog.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Log created successfully",
+      data: newLog,
+    });
+  } catch (error) {
+    console.error("Error creating log:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+router.put("/logs/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      symptoms,
+      glucose,
+      bloodPressure,
+      medications,
+      frequency,
+      timestamp,
+      diagnosis,
+      description,
+    } = req.body;
+
+    // Validate the input fields (if necessary, add more validation rules here)
+    if (!id || !updates) {
+      return res.status(400).json({
+        success: false,
+        message: "Log ID and update data are required",
+      });
+    }
+
+    const updateFields = {
+      ...(symptoms && { symptoms }),
+      ...(glucose && { glucose }),
+      ...(bloodPressure && { bloodPressure }),
+      ...(medications && { medications }),
+      ...(frequency && { frequency }),
+      ...(timestamp && { timestamp }),
+      ...(diagnosis && { diagnosis }),
+      ...(description && { description }),
+    };
+
+    // Find the log by ID and update it
+    const updatedLog = await Log.findByIdAndUpdate(id, updateFields, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied
+    });
+
+    if (!updatedLog) {
+      return res.status(404).json({
+        success: false,
+        message: "Log not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Log updated successfully",
+      log: updatedLog,
+    });
+  } catch (error) {
+    console.error("Error updating log:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+
+router.post("/doctor", verifyToken,async (req, res) => {
+  try {
+    const { doctorId } = req.body;
+
+    // Validate input
+    if (!patientId || !doctorId) {
+      return res.status(400).json({
+        success: false,
+        error: "Patient ID and Doctor ID are required",
+      });
+    }
+
+    // Find the patient and doctor
+    const patient = req.user._id
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        error: "Patient not found",
+      });
+    }
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        error: "Doctor not found",
+      });
+    }
+
+    // Check if the doctor is already assigned to the patient
+    if (patient.doctors.includes(doctorId)) {
+      return res.status(400).json({
+        success: false,
+        error: "Doctor already assigned to this patient",
+      });
+    }
+
+    // Add doctor to patient's doctors array
+    patient.doctors.push(doctorId);
+    await patient.save();
+
+    // Add patient to doctor's patients array
+    doctor.patients.push(patientId);
+    await doctor.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Doctor added to patient successfully",
+      patient,
+      doctor,
+    });
+  } catch (error) {
+    console.error("Error adding doctor:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+router.get("/doctors/:id", verifyToken,async (req, res) => {
+  try {
+    const { id } = req.params;
+    const patientId = req.user._id
+    // Find the patient by ID and populate the 'doctors' field
+    const patient = await Patient.findById(patientId).populate("doctors");
+
     if (!patient) {
       return res.status(404).json({
         success: false,
@@ -191,19 +394,67 @@ router.get("/logs", async (req , res ) => {
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Patient fetched successfully",
-      data: patient,
-    });
+    return res.status(200).json(patient.doctors);
   } catch (error) {
-    console.error("Error fetching patient:", error);
+    console.error("Error fetching doctors:", error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      error: "Internal server error",
     });
   }
 });
+
+router.post("/searchdoctors", async (req, res) => {
+  try {
+    const { specialty, hospitalName, boardCertifications, name } = req.query;
+
+    // Build the search query dynamically
+    const query = {};
+
+    if (specialty) {
+      query.specialty = { $regex: specialty, $options: "i" }; // Case-insensitive partial match
+    }
+
+    if (hospitalName) {
+      query.hospitalName = { $regex: hospitalName, $options: "i" };
+    }
+
+    if (boardCertifications) {
+      query.boardCertifications = { $regex: boardCertifications, $options: "i" };
+    }
+
+    if (name) {
+      query.$or = [
+        { firstName: { $regex: name, $options: "i" } },
+        { lastName: { $regex: name, $options: "i" } },
+      ];
+    }
+
+    // Fetch doctors matching the query
+    const doctors = await Doctor.find(query);
+
+    if (doctors.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No doctors found matching the criteria",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      doctors,
+    });
+  } catch (error) {
+    console.error("Error searching for doctors:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+
+
+
 
 // PUT route to update a patient by ID
 router.put("/:id", async (req , res ) => {

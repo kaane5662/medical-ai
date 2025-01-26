@@ -33,7 +33,7 @@ const verifyToken = (req, res, next) => {
     const token = req.cookies?.token;
     // console.log(token)
     if (!token) {
-        // console.log("Middleware do you work!")
+        console.log("Middleware do you work!")
         return res.status(401).json({ url: '/login' });
         // return res.redirect(`${process.env.CLIENT_DOMAIN}/login`)
     
@@ -41,7 +41,7 @@ const verifyToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_JWT);
-        
+        console.log(decoded)
         req.user = decoded;
         // console.log(req.user)
         next();
