@@ -6,19 +6,46 @@ import { Activity, Calendar, ClipboardList, MessageCircle, Stethoscope, User } f
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import axios from "axios";
+
 
 export default function DoctorDashboard() {
   // Example data for patients and appointments
-  const patients = [
-    { id: 1, name: "John Doe", lastVisit: "2023-10-01", condition: "Hypertension" },
-    { id: 2, name: "Jane Smith", lastVisit: "2023-10-05", condition: "Diabetes" },
-  ];
+  //const patients = [
+    //{ id: 1, name: "John Doe", lastVisit: "2023-10-01", condition: "Hypertension" },
+    //{ id: 2, name: "Jane Smith", lastVisit: "2023-10-05", condition: "Diabetes" },
+  //];
+
+  interface Patient {
+    id: number;
+    name: string;
+    lastVisit: string;
+    condition: string;
+  }
+  interface Appointment {
+    id: number;
+    patientName: string;
+    time: string;
+    purpose: string;
+  }
 
   const appointments = [
     { id: 1, patientName: "John Doe", time: "10:00 AM", purpose: "Follow-up" },
     { id: 2, patientName: "Jane Smith", time: "2:30 PM", purpose: "Consultation" },
   ];
 
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      const response = await axios.get("/patients", {withCredentials:true})
+      setPatients(response.data)
+    };
+
+    fetchPatients();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
