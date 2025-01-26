@@ -12,11 +12,21 @@ interface Message {
 }
 const ChatPage = () => {
 const router = useRouter(); // Initialize the router
-const [Messages,setMessages] = useState<Message[]>([]) 
+const [Messages,setMessages] = useState<Message[]>([])
+const [text,setText] = useState() 
 
 const fetchChat  =()=>{
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER}/aichat`,{withCredentials:true}).then((res)=>{
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER}/patients/aichat`,{withCredentials:true}).then((res)=>{
         setMessages(res.data)
+    }).catch((error:any)=>{
+        console.error(error)
+    })
+}
+const createMessage  =(e:any)=>{
+    e.preventDefault()
+    axios.post(`${process.env.NEXT_PUBLIC_SERVER}/patients/aichat/`,{text},{withCredentials:true}).then((res)=>{
+        const data = res.data
+        setMessages([...Messages,data.userBubble,data.aiBubble])
     }).catch((error:any)=>{
         console.error(error)
     })
@@ -24,7 +34,7 @@ const fetchChat  =()=>{
 
 useEffect(()=>{
     fetchChat()
-})
+},[])
 
 return (
 <div className="min-h-screen bg-[#E1E5F2] text-[#022B3A]">
@@ -66,28 +76,29 @@ return (
                     </div>
                 )
             })}
-            
+{/*             
             <div className="mb-4">
             <p className="font-semibold">User 2:</p>
             <p>Hi! I have a question about my order.</p>
-            </div>
+            </div> */}
         </div>
         </div>
 
         {/* Chat Input */}
-        <div className="flex gap-2">
-        <form>
+        <form onSubmit={createMessage}>
             
+            <div className="flex gap-2">
+            <input
+                type="text"
+                onChange={(e:any)=>setText(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F7A8C]"
+            />
+            <button className="px-4 py-2 bg-[#1F7A8C] text-white rounded-lg hover:bg-[#1a6a7a] transition-colors">
+                Send
+            </button>
+            </div>
         </form>
-        <input
-            type="text"
-            placeholder="Type a message..."
-            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F7A8C]"
-        />
-        <button className="px-4 py-2 bg-[#1F7A8C] text-white rounded-lg hover:bg-[#1a6a7a] transition-colors">
-            Send
-        </button>
-        </div>
     </div>
     </div>
 </div>

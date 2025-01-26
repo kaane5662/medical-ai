@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { AIChat, AIMessage } from "../schemas/AIChat.js";
+import { AIMessage } from "../schemas/AIChat.js";
 import { randomUUID } from "crypto";
 import Patient from "../schemas/Patient.js";
 import { verifyToken, generateToken } from "../jwtMiddleware.js";
@@ -101,6 +101,45 @@ router.put("/", async(req, res ) => {
   }
 
 });
+router.get("/aichat",verifyToken,async(req,res)=>{
+  const {id} = req.params
+  try{
+      const patientId = await req.user._id
+      if (!mongoose.Types.ObjectId.isValid(patientId)) {
+        return res.status(400).json({ error: "Invalid patient ID" });
+      }
+      const chatHistory = await AIMessage.find({patient:patientId})
+      res.status(201).json(chatHistory)
+  }catch(error){
+      console.log(error)
+      res.status(500).json({error:"Unexpected error occured"})
+  }
+})
+router.get("/logs", verifyToken,async (req , res ) => {
+  try {
+    console.log("hello from the world")
+    const patientId = req.user._id
+    console.log(patientId,"user thing")
+
+    const logs = await Log.find({patient:patientId})
+    
+    // if (!patient) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     error: "Patient not found",
+    //   });
+    // }
+    return res.status(200).json(logs);
+    
+  } catch (error) {
+    console.error("Error fetching patient:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+});
+
 
 // GET route to fetch patient
 router.get("/patient", verifyToken,async (req , res ) => {
@@ -238,30 +277,7 @@ router.post("/logs", verifyToken,async (req, res) => {
     });
   }
 });
-router.get("/log", verifyToken,async (req , res ) => {
-  try {
-    console.log("hello from the world")
-    const patientId = req.user._id
-    console.log(patientId,"user thing")
 
-    // // const patient = await Patient.findById(patientId)
-    
-    // if (!patient) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     error: "Patient not found",
-    //   });
-    // }
-    // return res.status(200).json(patient.logs);
-    return res.send()
-  } catch (error) {
-    console.error("Error fetching patient:", error);
-    return res.status(500).json({
-      success: false,
-      error: "Internal server error",
-    });
-  }
-});
 
 router.put("/logs/:id", async (req, res) => {
   try {
@@ -538,48 +554,34 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.post("/aichat",verifyToken,async(req,res)=>{
-  const {patientId} = req.body
-  try{
-      const patientId = await req.user._id
-      const newChat = new AIChat({
-        patientId:patientId,
-        cache: randomUUID()
-      })
-      const savedChat = await newChat.save()
-      res.status(201).json({aiChatId:savedChat._id})
-  }catch(error){
-      console.log(error)
-      res.status(500).json({error:"Unexpected error occured"})
-  }
-})
-router.get("/aichat/:id",[verifyToken],async(req,res)=>{
-  const {id} = req.params
-  try{
-      const patientId = await req.user._id
-      const chatHistory = await AIMessage.find({
-        id:id,
-        patientId: patientId
-      })
-      const savedChat = await newChat.save()
-      res.status(201).json({aiChatId:savedChat._id})
-  }catch(error){
-      console.log(error)
-      res.status(500).json({error:"Unexpected error occured"})
-  }
-})
+// router.post("/aichat",verifyToken,async(req,res)=>{
+//   const {patientId} = req.body
+//   try{
+//       const patientId = await req.user._id
+//       const newChat = new AIChat({
+//         patientId:patientId,
+//         cache: randomUUID()
+//       })
+//       const savedChat = await newChat.save()
+//       res.status(201).json({aiChatId:savedChat._id})
+//   }catch(error){
+//       console.log(error)
+//       res.status(500).json({error:"Unexpected error occured"})
+//   }
+// })
 
-router.put("/aichat/:id",[verifyToken],async(req,res)=>{
+router.post("/aichat",verifyToken,async(req,res)=>{
   const {text} = req.body
   const {id} = req.params
   try{
+      console.log("Hello thre")
       const patientId = await req.user._id
       
       const message = await anthropic.messages.create({
         model: "claude-3-5-sonnet-20241022",
         max_tokens: 1024,
         temperature:0,
-         system: "Make sure the response content is of TYPE text and be as helpful as possible.",
+         system: "Act as an AI Patient Care Provider Assistant designed to support healthcare professionals and patients who provides professional advice",
         messages: [
             {
                 "role": "user", 
@@ -599,7 +601,7 @@ router.put("/aichat/:id",[verifyToken],async(req,res)=>{
 
                 Always prioritize patient privacy and adhere to HIPAA or relevant data protection regulations. If a situation requires urgent or specialized attention, escalate it to a human healthcare provider immediately.
 
-                Example Scenario: A patient messages you saying, 'I’ve been feeling dizzy and nauseous for two days. What should I do?' How would you respond?"
+                
                 `.trim(),
                 
             },
@@ -607,17 +609,19 @@ router.put("/aichat/:id",[verifyToken],async(req,res)=>{
       });
       if(!message.content) return {error:"No content"}
       const aiResponse = message.content[0].text
-      await AIMessage.create({
+      const userBubble = await AIMessage.create({
         text,
         aiChat: id,
-        role:"user"
+        role:"user",
+        patient: patientId
       })
-      await AIMessage.create({
+      const aiBubble = await AIMessage.create({
         text:aiResponse,
         role:"ai",
-        aiChat:id
+        aiChat:id,
+        patient:patientId
       })
-      return res.status(201).json({})
+      return res.status(201).json({userBubble,aiBubble})
   }catch(error){
       console.log(error)
       res.status(500).json({error:"Unexpected error occured"})

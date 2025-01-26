@@ -59,7 +59,11 @@ const paitentSchema = new mongoose.Schema({
         required:true,
         minlength: 8, // Minimum length of 8 characters
         maxlength: 128,
-    }
+    },
+    aiMessages:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"AIMessage"
+    }]
     
   });
 
