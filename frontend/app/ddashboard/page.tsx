@@ -140,7 +140,6 @@ export default function DoctorDashboard() {
           </Card>
 
           {/* Quick Actions Card */}
-          {/* Quick Actions Card */}
             <Card className="bg-[#FFFFFF] shadow-lg">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
