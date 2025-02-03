@@ -87,10 +87,10 @@ export default function Home() {
           className="mb-6"
         />
         <h1 className="text-5xl font-bold mb-4 text-[#BFDBF7]">
-          Your Company Name
+          Care4All
         </h1>
         <p className="text-xl font-medium text-[#E1E5F2]">
-          Inspiring Future, Today. {/* Replace with your slogan */}
+          Saving Lives, One Connection At A Time. {/* Replace with your slogan */}
         </p>
       </header>
 
@@ -104,7 +104,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="mt-20 text-center text-sm text-[#E1E5F2]">
         <p>
-          © {new Date().getFullYear()} Your Company Name. All rights reserved.
+          © {new Date().getFullYear()} Care4All. All rights reserved.
         </p>
       </footer>
     </div>

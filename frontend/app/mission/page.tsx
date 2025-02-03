@@ -9,7 +9,7 @@ export default function Mission() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-4 bg-[#1F7A8C]">
         <Image
-          src="/company-logo.svg" // Replace with your company logo
+          src="/company-logo.png" // Replace with your company logo
           alt="Company Logo"
           width={50}
           height={50}
@@ -80,7 +80,7 @@ export default function Mission() {
           </h1>
           <div className="max-w-3xl text-center">
             <p className="text-xl font-medium text-[#E1E5F2]">
-              At <span className="font-bold text-[#FFD700]">Your Company Name</span>, our mission is to revolutionize the way healthcare is delivered by leveraging cutting-edge technology and innovative solutions. We are committed to:
+              At <span className="font-bold text-[#FFD700]">Care4All</span>, our mission is to streamline communication between you and your Health Care Provider. Care4All strives to rid the days of hospital miscommunication. This is why we are committed to:
             </p>
             <ul className="mt-6 text-lg text-[#E1E5F2] list-disc list-inside">
               <li className="mb-3">
